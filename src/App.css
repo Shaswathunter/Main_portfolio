@@ -5,6 +5,33 @@ html, body, #root {
   padding: 0;
   overflow-x: hidden;
 }
+/* Lightning Flash Animation */
+@keyframes lightning {
+  0%, 100% {
+    background-color: transparent;
+  }
+  5% {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  6% {
+    background-color: transparent;
+  }
+  7% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  8% {
+    background-color: transparent;
+  }
+}
+
+.lightning-flash {
+  animation: lightning 8s infinite;
+}
+
+/* Neon Glow Shadow */
+.drop-shadow-glow {
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+}
 
 
 /* .logo {

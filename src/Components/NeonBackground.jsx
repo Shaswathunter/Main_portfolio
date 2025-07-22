@@ -25,7 +25,7 @@ const NeonBackground = ({ children }) => {
     >
       {/* Neon Glow */}
       <motion.div
-        className="pointer-events-none absolute w-[500px] h-[500px] rounded-full z-0"
+        className="pointer-events-none absolute w-[500px] h-[500px] rounded-full z-20"
         style={{
           top: smoothY,
           left: smoothX,
@@ -37,9 +37,7 @@ const NeonBackground = ({ children }) => {
       />
 
       {/* Actual Page Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
+      <div className="relative z-50">{children}</div>
     </div>
   );
 };
