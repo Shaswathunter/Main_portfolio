@@ -19,7 +19,6 @@ const Hero = () => {
       {/* Hero Section */}
       <div className="absolute inset-0  opacity-20 blur-3xl"></div>
       <div
-        id="home"
         className="max-w-screen-xl mx-auto flex flex-col items-center justify-center h-full px-6 md:flex-row relative z-10"
       >
         <motion.div

@@ -1,35 +1,50 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // You can integrate EmailJS or backend logic here
-    setFormData({ name: '', email: '', message: '' });
-  };
+   const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = async (data) =>{
+    const userInfo = {
+      access_key :"496bad8b-e77f-465e-9e3a-aef49f36fe87",
+      name: data.username,
+      email: data.email ,
+      message : data.message,
+    }
+    try {
+      await axios.post("https://api.web3forms.com/submit",userInfo)
+      toast.success("Message Sent Successfully on Shaswat's Email")
+
+    } catch (error) {
+      toast.error("An error occured");
+      
+    }
+  }
 
   return (
    <div className='flex flex-wrap justify-center items-center min-h-screen md:flex-row gap-4 mt-6 '>
-     <section id="contact" className=" text-white py-16 px-4">
+     <section  className=" text-white py-16 px-4">
       <motion.div 
         className="max-w-3xl mx-auto text-center"
         initial={{ opacity: 0, y: 50 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.6 }}
+
       >
         <h2 className="text-4xl font-bold mb-4 text-secondary">Get in Touch</h2>
         <p className="mb-8 text-textSecondary">We'd love to hear from you! Fill out the form below to get in touch.</p>
 
         <form 
-          onSubmit={handleSubmit} 
+          onSubmit={handleSubmit(onSubmit)} 
           className="space-y-6 text-left"
         >
           {/* Name Field */}
@@ -42,9 +57,8 @@ const ContactForm = () => {
             <input 
               type="text" 
               name="name" 
-              value={formData.name}
-              onChange={handleChange}
-              required
+              {...register("username", { required: true })}
+              
               className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-secondary"
             />
           </motion.div>
@@ -59,9 +73,8 @@ const ContactForm = () => {
             <input 
               type="email" 
               name="email" 
-              value={formData.email}
-              onChange={handleChange}
-              required
+              {...register("email", { required: true })}
+              
               className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-secondary"
             />
           </motion.div>
@@ -76,9 +89,7 @@ const ContactForm = () => {
             <textarea 
               name="message" 
               rows="5" 
-              value={formData.message}
-              onChange={handleChange}
-              required
+              {...register("message", { required: true })}
               className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-secondary resize-none"
             />
           </motion.div>

@@ -61,7 +61,6 @@ const Projects = () => {
 
   return (
     <div
-      id="projects"
       name="projects"
       className="w-full min-h-screen  text-gray-100 py-20 relative overflow-hidden"
     >

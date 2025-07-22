@@ -44,7 +44,7 @@ const Skills = () => {
   };
 
   return (
-    <div id="skills" name="skills" className="relative text-white py-16">
+    <div name="skills" className="relative text-white py-16">
       {/* Neon light effect */}
       <div
         className="absolute inset-0 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 animate-pulse"

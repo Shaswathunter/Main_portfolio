@@ -20,7 +20,7 @@ const Experience = () => {
   ];
 
   return (
-    <div id="experience" name="experience" className="w-full min-h-screen  text-gray-100 py-20">
+    <div name="experience" className="w-full min-h-screen  text-gray-100 py-20">
       <div className="max-w-screen-lg mx-auto p-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
