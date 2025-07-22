@@ -57,12 +57,13 @@ const Hero = () => {
             />
      .
           </p>
-          <div>
+        <div className="flex flex-col md:flex-row gap-4 mt-6 lg:justify-start items-center">
+            <div>
             <motion.button
               to={Projects}
               whileHover={{ scale: 1.2, rotate: 10 }}
               whileTap={{ scale: 0.9, rotate: -10 }}
-              className="group text-white w-fit px-8 py-3 my-2 flex items-center rounded-lg bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg hover:shadow-xl transition-transform"
+              className="group text-white w-fit px-4 py-3 my-2 flex items-center rounded-lg bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg hover:shadow-xl transition-transform "
             >
               Explore Projects
             </motion.button>
@@ -82,11 +83,13 @@ const Hero = () => {
               to={Projects}
               whileHover={{ scale: 1.2, rotate: 10 }}
               whileTap={{ scale: 0.9, rotate: -10 }}
-              className="group text-white w-fit px-8 py-3 my-2 flex items-center rounded-lg bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg hover:shadow-xl transition-transform"
+              className="group text-white w-fit px-8 py-3 my-2 flex items-center rounded-lg bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg hover:shadow-xl transition-transform md:items-center md:justify-center"
             >
               Contact Me
             </motion.button>
           </div>
+                  </div>
+
           <div>
             <motion.div
               className="flex justify-center gap-6 mt-8"
@@ -126,7 +129,7 @@ const Hero = () => {
           <img
             src={pic}
             alt="profile"
-            className="rounded-full mx-auto w-2/3 md:w-full  hover: transition-transform  "
+            className="rounded-full mx-auto w-2/3 md:w-full mt-20  hover:scale-105 transition-transform  duration-300 "
           />
         </motion.div>
       </div>
