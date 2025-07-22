@@ -17,7 +17,7 @@ const About = () => {
 
                 {/* Animated Paragraph */}
                 <motion.p
-                    className="py-6 text-lg text-gray-300 text-center leading-relaxed tracking-wide"
+                    className="py-6 text-gray-300 lg:text-center lg:text-2xl md:text-xl leading-relaxed tracking-wide text-justif"
                     initial={{ x: -100, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
