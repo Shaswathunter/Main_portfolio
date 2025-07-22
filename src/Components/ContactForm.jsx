@@ -17,7 +17,7 @@ const ContactForm = () => {
   };
 
   return (
-   <div className='flex justify-center items-center min-h-screen '>
+   <div className='flex flex-wrap justify-center items-center min-h-screen md:flex-row gap-4 mt-6 '>
      <section id="contact" className=" text-white py-16 px-4">
       <motion.div 
         className="max-w-3xl mx-auto text-center"
