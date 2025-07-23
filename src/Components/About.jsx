@@ -1,30 +1,36 @@
 import React from "react";
 import { motion } from "framer-motion";
+import pic from "../assets/1.png";
 
 const About = () => {
-    return (
-        <div className="w-full min-h-screen  text-gray-100 py-20">
-            <div className="max-w-screen-lg mx-auto p-4">
-                {/* Animated Heading */}
-                <motion.h2
-                    className="text-5xl font-extrabold text-center text-yellow-400"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
+  return (
+    <div className="w-full min-h-screen relative py-20 text-gray-100">
+      {/* ✅ Background Image Layer */}
+      <div
+        className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-25 pointer-events-none sm:bg-contain md:mr-[1200px]"
+        style={{ backgroundImage: `url(${pic})` }}
+      ></div>
 
+      {/* ✅ Foreground Content */}
+      <div className="relative max-w-screen-lg mx-auto p-4 z-10">
+        {/* Animated Heading */}
+        <motion.h2
+          className="text-5xl font-extrabold text-center text-yellow-400"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+        >
+          About Me
+        </motion.h2>
 
-                >
-                    About Me
-                </motion.h2>
-
-                {/* Animated Paragraph */}
-                <motion.p
-                    className="py-6 text-gray-300 lg:text-center lg:text-2xl md:text-xl leading-relaxed tracking-wide text-justif"
-                    initial={{ x: -100, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
-                >
-                    Hi! I'm a passionate Full Stack Web Developer specializing in the MERN
+        {/* Animated Paragraph */}
+        <motion.p
+          className="py-6 text-gray-300 lg:text-center lg:text-2xl md:text-xl leading-relaxed tracking-wide text-justify"
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
+        >
+            Hi! I'm a passionate Full Stack Web Developer specializing in the MERN
                     Stack (MongoDB, Express.js, React.js, Node.js). I build scalable,
                     responsive, and high-performance web applications — from clean, modern
                     frontends to robust backend APIs. Whether you're a startup needing an
@@ -40,25 +46,25 @@ const About = () => {
                     detail Eagerness to learn and improve Let’s work together to build
                     something amazing. I’m currently open for freelance and remote
                     opportunities!
-                </motion.p>
+        </motion.p>
 
-                {/* Magic Text Animation */}
-                <motion.div
-                    className="text-center mt-10 text-2xl font-semibold text-yellow-300"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                        duration: 2,
-                        ease: "easeInOut",
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                    }}
-                >
-                    Let's create something magical together! ✨
-                </motion.div>
-            </div>
-        </div>
-    );
+        {/* Magic Text Animation */}
+        <motion.div
+          className="text-center mt-10 text-2xl font-semibold text-yellow-300"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        >
+          Let's create something magical together! ✨
+        </motion.div>
+      </div>
+    </div>
+  );
 };
 
 export default About;

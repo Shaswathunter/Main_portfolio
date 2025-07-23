@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import blog from "../assets/blog-app.mp4";
+import soon from "../assets/soon.mp4";
+
 const Projects = () => {
   const projects = [
     {
@@ -14,10 +16,10 @@ const Projects = () => {
     },
     {
       id: 2,
-      title: "AI Assistant Platform",
+      title: "WhatsApp Clone",
       description:
-        "Advanced AI platform for automated customer service and support.",
-      video: "/ai-assistant.mp4",
+        "A clone of the popular messaging app with real-time chat features.",
+      video: `${soon}`,
       demoLink: "#",
       codeLink: "#",
     },
@@ -26,7 +28,7 @@ const Projects = () => {
       title: "Fraud Detection System",
       description:
         "Real-time fraud detection system using machine learning algorithms.",
-      video: "/fraud-detection.mp4",
+      video: `${soon}`,
       demoLink: "#",
       codeLink: "#",
     },
@@ -35,7 +37,7 @@ const Projects = () => {
       title: "E-Commerce Recommendation Engine",
       description:
         "AI-driven recommendation engine for personalized shopping experiences.",
-      video: "/ecommerce.mp4",
+      video: `${soon}`,
       demoLink: "#",
       codeLink: "#",
     },
@@ -44,7 +46,7 @@ const Projects = () => {
       title: "Weather Forecasting App",
       description:
         "Accurate weather predictions using advanced meteorological data analysis.",
-      video: "/weather.mp4",
+      video: `${soon}`,
       demoLink: "#",
       codeLink: "#",
     },
@@ -53,7 +55,7 @@ const Projects = () => {
       title: "Blockchain Voting System",
       description:
         "Secure and transparent voting system powered by blockchain technology.",
-      video: "./assets/blog-app.mp4",
+      video: `${soon}`,
       demoLink: "#",
       codeLink: "#",
     },

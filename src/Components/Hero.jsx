@@ -5,7 +5,7 @@ import Resume from "../assets/Resume.pdf";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { MdMessage } from "react-icons/md";
 import Typical from "react-typical";
-import video from "../assets/video.mp4";
+import { scroller } from 'react-scroll'; // 🆕 Add this at the top
 
 const Hero = () => {
   const icons = [
@@ -17,19 +17,8 @@ const Hero = () => {
 
   return (
     <div className="relative h-screen w-full overflow-hidden text-white">
-      {/* 🔥 Thunderstorm Video in Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-      className="absolute top-0 left-0 w-full h-full object-cover z-0"
-      >
-        <source src={video} type="video/mp4" />
-      </video>
-
-      {/* ⚡ Optional Lightning Flash Overlay (can adjust frequency & color) */}
-      <div className="absolute z-20 pointer-events-none animate-lightningFlash" />
+   
+      <div className="absolute -inset-0z-0 pointer-events-none animate-lightningFlash" />
 
       {/* 🔮 Main Hero Content */}
       <div className="relative z-30 max-w-screen-xl mx-auto flex flex-col items-center justify-center h-full px-6 md:flex-row">
@@ -59,13 +48,17 @@ const Hero = () => {
 
           {/* 🚀 Buttons */}
           <div className="flex flex-col md:flex-row gap-2 mt-6 items-center md:items-start">
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
-            >
-              Explore Projects
-            </motion.button>
+<motion.button
+  onClick={() => {
+    const section = document.getElementById("projects");
+    section?.scrollIntoView({ behavior: "smooth" });
+  }}
+  whileHover={{ scale: 1.1, rotate: 5 }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
+>
+  Explore Projects
+</motion.button>
             <motion.button
               onClick={() => window.open(Resume, "_blank")}
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -75,6 +68,10 @@ const Hero = () => {
               View Resume
             </motion.button>
             <motion.button
+           onClick={() => {
+    const section = document.getElementById("contact");
+    section?.scrollIntoView({ behavior: "smooth" });
+  }}
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
               className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
@@ -112,7 +109,8 @@ const Hero = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1 }}
           whileHover={{ scale: 1.05 }}
-          className="w-full md:w-2/3 flex justify-center mt-10 md:mt-0"
+         className="hidden sm:flex w-full md:w-2/3 justify-center mt-10 md:mb-[500px]"
+
         >
           <img
             src={pic}

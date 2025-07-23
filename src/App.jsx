@@ -8,7 +8,6 @@ import About from './Components/About';
 import NeonGlowBackground from './Components/NeonBackground';
 import ContactForm from './Components/ContactForm.jsx';
 import { Toaster } from 'react-hot-toast';
-import  {Element}  from 'react-scroll'; // ✅ Add this
 
 function App() {
   return (
@@ -17,29 +16,29 @@ function App() {
       <Navbar />
 
       {/* Each section wrapped in <Element name="..."> */}
-      <Element name="home">
+      <div id="home">
         <Hero />
-      </Element>
+      </div>
 
-      <Element name="about">
+      <div id="about">
         <About />
-      </Element>
+      </div>
 
-      <Element name="skills">
+      <div id="skills">
         <Skills />
-      </Element>
+      </div>
 
-      <Element name="projects">
+      <div id="projects">
         <Projects />
-      </Element>
+      </div>
 
       {/* <Element name="experience">
         <Experience />
       </Element> */}
 
-      <Element name="contact">
+      <div id="contact">
         <ContactForm />
-      </Element>
+      </div>
     </NeonGlowBackground>
   );
 }

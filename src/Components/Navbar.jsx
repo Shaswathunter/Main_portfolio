@@ -7,11 +7,11 @@ const Navbar = () => {
   const [nav, setNav] = useState(false);
 
   const links = [
-    { id: 1, link: "home" },
-    { id: 2, link: "about" },
-    { id: 3, link: "skills" },
-    { id: 4, link: "projects" },
-    { id: 5, link: "contact" },
+    { id: "home", link: "home" },
+    { id: "about", link: "about" },
+    { id: "skills", link: "skills" },
+    { id: "projects", link: "projects" },
+    { id: "contact", link: "contact" },
   ];
 
   return (
@@ -32,7 +32,18 @@ const Navbar = () => {
             key={id}
             className="px-4 cursor-pointer capitalize font-medium text-textSecondary hover:text-secondary duration-200"
           >
-            <Link to={link} smooth={true} offset={-70} duration={500}>
+            <Link
+              onClick={() => {
+    const section = document.getElementById(link);
+    section?.scrollIntoView({ behavior: "smooth" })
+    ;
+  }}
+              smooth={true}
+              offset={-70}
+              duration={500}
+              spy={true} // 🟢 enables scroll tracking
+              activeClass="text-secondary font-bold" // 🟢 applies this class when section is active
+            >
               {link}
             </Link>
           </li>
@@ -60,11 +71,15 @@ const Navbar = () => {
             {links.map(({ id, link }) => (
               <li key={id}>
                 <Link
-                  to={link}
+                  onClick={() => {
+    const section = document.getElementById(link);
+    section?.scrollIntoView({ behavior: "smooth" })
+    setNav(false);
+  }}
                   smooth={true}
                   offset={-70}
                   duration={500}
-                  onClick={() => setNav(false)}
+                 
                   className="hover:text-secondary transition-all duration-200"
                 >
                   {link}
