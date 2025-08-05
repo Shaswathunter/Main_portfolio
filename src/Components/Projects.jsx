@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import blog from "../assets/blog-app.mp4";
 import soon from "../assets/soon.mp4";
@@ -97,48 +97,71 @@ const Projects = () => {
         </motion.div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-10">
           {projects.map(
-            ({ id, title, description, demoLink, codeLink, video }) => (
-              <motion.div
-                key={id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
-              >
-                <video
-                  src={video}
-                  className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105 hover:brightness-105"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-                <div className="p-5 text-center">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                    {title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-5">{description}</p>
-                  <div className="flex justify-center gap-4">
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href={demoLink}
-                      className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all"
-                    >
-                      Demo
-                    </motion.a>
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href={codeLink}
-                      className="px-5 py-2 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-all"
-                    >
-                      Code
-                    </motion.a>
+            ({ id, title, description, demoLink, codeLink, video }) => {
+              const [isLoading, setIsLoading] = useState(true);
+
+              return (
+                <motion.div
+                  key={id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="relative w-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+                >
+                  {/* Show Spinner until video loads */}
+                  {isLoading && (
+                    <div className="absolute inset-0 z-10 bg-black bg-opacity-40 flex items-center justify-center">
+                      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+
+                  {/* Video */}
+                  <video
+                    src={video}
+                    className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105 hover:brightness-105"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    onCanPlayThrough={() => setIsLoading(false)} // Jab load ho jaye to spinner hata do
+                  />
+
+                  {/* Text Content */}
+                  <div className="p-5 text-center">
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                      {title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-5">{description}</p>
+                    <div className="flex justify-center gap-4">
+                      {demoLink !== "#" && (
+                        <motion.a
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          href={demoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all"
+                        >
+                          Demo
+                        </motion.a>
+                      )}
+                      {codeLink !== "#" && (
+                        <motion.a
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          href={codeLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-all"
+                        >
+                          Code
+                        </motion.a>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            )
+                </motion.div>
+              );
+            }
           )}
         </div>
       </div>
