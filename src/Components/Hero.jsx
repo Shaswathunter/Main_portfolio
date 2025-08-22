@@ -9,7 +9,7 @@ import { scroller } from 'react-scroll'; // 🆕 Add this at the top
 
 const Hero = () => {
   const icons = [
-    { icon: <FaLinkedin />, href: "https://linkedin.com/in/yourprofile" },
+    { icon: <FaLinkedin />, href: "https://linkedin.com/in/codershaswat" },
     { icon: <FaGithub />, href: "https://github.com/Shaswathunter" },
     { icon: <FaTwitter />, href: "https://x.com/CoderShaswat" },
     { icon: <MdMessage />, href: "mailto:Shaswat2016@gmail.com" },
