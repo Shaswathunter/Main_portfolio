@@ -1,44 +1,59 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowUp } from "react-icons/fa";
 
 const BackToTop = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 30) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
+    const container = document.getElementById("scroll-container") || window;
+
+    const handleScroll = () => {
+      const scrollTop =
+        container === window ? window.scrollY : container.scrollTop;
+
+      setVisible(scrollTop > (document.body.scrollHeight * 1));
     };
 
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    // ✅ For full website body scroll
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-
-    // ✅ If you're using a custom scroll container, uncomment this:
-    // document.getElementById("root")?.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToTop = () => { 
+    const el = document.getElementById("scroll-container");
+    if (el) {
+      el.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
-  return (
-    <>
+  return createPortal(
+    <AnimatePresence>
       {visible && (
-        <button
+        <motion.button
+          key="back-to-top"
+          aria-label="Back to top"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white text-black shadow-lg hover:scale-110 transition-transform duration-300"
+          initial={{ opacity: 0, y: 50, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.8 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="fixed bottom-6 right-6 z-[99999] p-4 rounded-full
+                     bg-black/80 backdrop-blur-md
+                     border border-cyan-400
+                     shadow-[0_0_15px_rgba(34,211,238,0.8),0_0_30px_rgba(34,211,238,0.6)]
+                     text-cyan-400 hover:text-white
+                     hover:bg-gradient-to-r hover:from-cyan-400 hover:to-purple-500
+                     hover:shadow-[0_0_20px_rgba(236,72,153,0.9),0_0_40px_rgba(34,211,238,0.8)]
+                     transition-all duration-300 ease-out"
         >
           <FaArrowUp size={20} />
-        </button>
+        </motion.button>
       )}
-    </>
+    </AnimatePresence>,
+    document.body
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 const NeonBackground = ({ children }) => {
@@ -6,38 +6,52 @@ const NeonBackground = ({ children }) => {
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 100, damping: 20 });
   const smoothY = useSpring(mouseY, { stiffness: 100, damping: 20 });
-
   const wrapperRef = useRef(null);
+
+  const colors = [
+    "rgba(0,255,255,0.8)",
+    "rgba(255,0,255,0.7)",
+    "rgba(0,255,100,0.7)",
+    "rgba(255,255,0,0.7)",
+    "rgba(255,0,100,0.7)",
+  ];
+  const [colorIndex, setColorIndex] = useState(0);
 
   const handleMouseMove = (e) => {
     const rect = wrapperRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    mouseX.set(x);
-    mouseY.set(y);
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
   };
+
+  useEffect(() => {
+    const rect = wrapperRef.current.getBoundingClientRect();
+    mouseX.set(rect.width / 2);
+    mouseY.set(rect.height / 2);
+  }, []);
 
   return (
     <div
+      id="scroll-container"
       ref={wrapperRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full bg-black min-h-screen overflow-visible"
+      onClick={() => setColorIndex((p) => (p + 1) % colors.length)}
+      className="relative w-full h-screen overflow-y-auto overflow-x-hidden bg-black cursor-pointer"
     >
-      {/* Neon Glow */}
+      {/* Neon Glow (always behind) */}
       <motion.div
-        className="pointer-events-none absolute w-[500px] h-[500px] rounded-full "
-        style={{
-          top: smoothY,
-          left: smoothX,
-          translateX: "-50%",
-          translateY: "-50%",
-          background: "radial-gradient(circle, rgba(0,255,255,0.8), transparent 80%) ",
-          filter: "blur(50px)",
-        }}
-      />
+  className="pointer-events-none fixed w-[500px] h-[500px] rounded-full mix-blend-screen"
+  style={{
+    top: smoothY,
+    left: smoothX,
+    translateX: "-50%",
+    translateY: "-50%",
+    background: `radial-gradient(circle, ${colors[colorIndex]}, transparent 80%)`,
+    filter: "blur(50px)",
+    zIndex: 0,
+  }}
+/>
 
-      {/* Actual Page Content */}
-      <div className="relative ">{children}</div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 };

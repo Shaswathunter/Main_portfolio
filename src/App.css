@@ -10,6 +10,9 @@ html, body, #root {
   font-weight: 700;
   border-bottom: 2px solid #00ffff;
 }
+html, body, #root { height: 100%; }
+body { overflow: hidden; } /* container hi scroll karega */
+
 /* .logo {
   height: 6em;
   padding: 1.5em;

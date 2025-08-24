@@ -21,7 +21,7 @@ function App() {
         <Hero />
       </div>
 
-      <div id="about" className="h-[1500px]">
+      <div id="about" >
         <About />
       </div>
 
@@ -40,9 +40,11 @@ function App() {
       <div id="contact">
         <ContactForm />
       </div>
+    
       <div>
         <BackToTop /> {/* ✅ Button added here */}
       </div>
+      
     </NeonGlowBackground>
   );
 }
