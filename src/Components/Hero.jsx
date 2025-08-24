@@ -5,7 +5,6 @@ import Resume from "../assets/Resume.pdf";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { MdMessage } from "react-icons/md";
 import Typical from "react-typical";
-import { scroller } from 'react-scroll'; // 🆕 Add this at the top
 
 const Hero = () => {
   const icons = [
@@ -17,25 +16,44 @@ const Hero = () => {
 
   return (
     <div className="relative h-screen w-full overflow-hidden text-white">
-   
-      <div className="absolute -inset-0z-0 pointer-events-none animate-lightningFlash" />
-
       {/* 🔮 Main Hero Content */}
       <div className="relative z-30 max-w-screen-xl mx-auto flex flex-col items-center justify-center h-full px-6 md:flex-row">
+        
         {/* 💬 Left Side Text */}
         <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1 }}
+          initial={{ x: -120, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          viewport={{ once: false, amount: 0.3 }}
           className="flex flex-col justify-center h-full text-center md:text-left"
         >
-          <h2 className="text-4xl sm:text-6xl font-extrabold text-white drop-shadow-[0_0_20px_cyan]">
+          <motion.h2
+            initial={{ y: -80, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            viewport={{ once: false }}
+            className="text-4xl sm:text-6xl font-extrabold text-white drop-shadow-[0_0_20px_cyan]"
+          >
             WELCOME TO
-          </h2>
-          <h1 className="text-3xl sm:text-5xl font-bold text-cyan-400 py-4 drop-shadow-[0_0_25px_cyan]">
+          </motion.h2>
+
+          <motion.h1
+            initial={{ x: -100, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            viewport={{ once: false }}
+            className="text-3xl sm:text-5xl font-bold text-cyan-400 py-4 drop-shadow-[0_0_25px_cyan]"
+          >
             <Typical steps={["Shaswat's World", 5000]} loop={Infinity} wrapper="b" />
-          </h1>
-          <p className="text-gray-300 py-4 max-w-lg text-lg drop-shadow-[0_0_15px_cyan]">
+          </motion.h1>
+
+          <motion.p
+            initial={{ x: -100, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            viewport={{ once: false }}
+            className="text-gray-300 py-4 max-w-lg text-lg drop-shadow-[0_0_15px_cyan]"
+          >
             <Typical
               steps={[
                 "I'm a Full Stack Developer (MERN Stack), building modern web applications.",
@@ -44,21 +62,27 @@ const Hero = () => {
               loop={Infinity}
               wrapper="b"
             />
-          </p>
+          </motion.p>
 
           {/* 🚀 Buttons */}
-          <div className="flex flex-col md:flex-row gap-2 mt-6 items-center md:items-start">
-<motion.button
-  onClick={() => {
-    const section = document.getElementById("projects");
-    section?.scrollIntoView({ behavior: "smooth" });
-  }}
-  whileHover={{ scale: 1.1, rotate: 5 }}
-  whileTap={{ scale: 0.95 }}
-  className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
->
-  Explore Projects
-</motion.button>
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            viewport={{ once: false }}
+            className="flex flex-col md:flex-row gap-2 mt-6 items-center md:items-start"
+          >
+            <motion.button
+              onClick={() => {
+                const section = document.getElementById("projects");
+                section?.scrollIntoView({ behavior: "smooth" });
+              }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
+            >
+              Explore Projects
+            </motion.button>
             <motion.button
               onClick={() => window.open(Resume, "_blank")}
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -68,25 +92,25 @@ const Hero = () => {
               View Resume
             </motion.button>
             <motion.button
-           onClick={() => {
-    const section = document.getElementById("contact");
-    section?.scrollIntoView({ behavior: "smooth" });
-  }}
+              onClick={() => {
+                const section = document.getElementById("contact");
+                section?.scrollIntoView({ behavior: "smooth" });
+              }}
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
               className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
             >
               Contact Me
             </motion.button>
-          </div>
+          </motion.div>
 
           {/* 🌐 Social Icons */}
           <motion.div
             className="flex justify-center gap-6 mt-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
+            initial={{ y: 50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            viewport={{ once: false }}
           >
             {icons.map((item, index) => (
               <motion.a
@@ -105,17 +129,17 @@ const Hero = () => {
 
         {/* 🧍‍♂️ Profile Image */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1 }}
-          whileHover={{ scale: 1.05 }}
-         className="hidden sm:flex w-full md:w-2/3 justify-center mt-10 md:mb-[500px]"
-
+          initial={{ x: 120, opacity: 0, scale: 0.8 }}
+          whileInView={{ x: 0, opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: false, amount: 0.4 }}
+          whileHover={{ scale: 1.05, rotateY: 5 }}
+          className="hidden sm:flex w-full md:w-2/3 justify-center mt-10 md:mb-[500px]"
         >
           <img
             src={pic}
             alt="profile"
-            className="rounded-full w-2/3 md:w-full hover:scale-105 transition duration-300 "
+            className="rounded-full w-2/3 md:w-full hover:scale-105 transition duration-300"
           />
         </motion.div>
       </div>

@@ -1,13 +1,14 @@
-import './App.css';
-import Navbar from './Components/Navbar';
-import Hero from './Components/Hero';
-import Skills from './Components/Skills';
-import Projects from './Components/Projects';
+import "./App.css";
+import Navbar from "./Components/Navbar";
+import Hero from "./Components/Hero";
+import Skills from "./Components/Skills";
+import Projects from "./Components/Projects";
 // import Experience from './Components/Experience'
-import About from './Components/About';
-import NeonGlowBackground from './Components/NeonBackground';
-import ContactForm from './Components/ContactForm.jsx';
-import { Toaster } from 'react-hot-toast';
+import About from "./Components/About";
+import NeonGlowBackground from "./Components/NeonBackground";
+import ContactForm from "./Components/ContactForm.jsx";
+import { Toaster } from "react-hot-toast";
+import BackToTop from "./Components/backToTop.jsx";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
         <Hero />
       </div>
 
-      <div id="about">
+      <div id="about" className="h-[1500px]">
         <About />
       </div>
 
@@ -38,6 +39,9 @@ function App() {
 
       <div id="contact">
         <ContactForm />
+      </div>
+      <div>
+        <BackToTop /> {/* ✅ Button added here */}
       </div>
     </NeonGlowBackground>
   );

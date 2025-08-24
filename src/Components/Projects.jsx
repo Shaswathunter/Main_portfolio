@@ -61,12 +61,31 @@ const Projects = () => {
     },
   ];
 
+  // ✅ Function to decide animation direction based on index
+  const getInitialAnimation = (index) => {
+    const directions = [
+      { x: -120, y: 0 }, // left
+      { x: 120, y: 0 },  // right
+      { x: 0, y: 120 },  // bottom
+      { x: 0, y: -120 }, // top
+    ];
+    return directions[index % directions.length];
+  };
+
+  const directions = [
+  { x: -200, y: 100, rotate: -10 }, // left se aur thoda neeche
+  { x: 200, y: -100, rotate: 10 },  // right se aur thoda upar
+  { x: -150, y: -150, rotate: -6 }, // top-left
+  { x: 150, y: 150, rotate: 6 },    // bottom-right
+];
+
+
   return (
     <div
       name="projects"
-      className="w-full min-h-screen  text-gray-100 py-20 relative overflow-hidden"
+      className="w-full min-h-screen text-gray-100 py-20 relative overflow-hidden"
     >
-      {/* Enhanced Neon background animation */}
+      {/* Neon background animation */}
       <motion.div
         className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-50 blur-3xl"
         animate={{
@@ -82,10 +101,12 @@ const Projects = () => {
       ></motion.div>
 
       <div className="max-w-screen-lg p-4 mx-auto relative z-10">
+        {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: false }}
           className="pb-8 text-center"
         >
           <h2 className="text-5xl font-extrabold inline border-b-4 border-blue-500">
@@ -95,20 +116,39 @@ const Projects = () => {
             Explore some of my recent work and innovations
           </p>
         </motion.div>
+
+        {/* Projects Grid */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-10">
           {projects.map(
-            ({ id, title, description, demoLink, codeLink, video }) => {
+            ({ id, title, description, demoLink, codeLink, video }, index) => {
               const [isLoading, setIsLoading] = useState(true);
 
               return (
-                <motion.div
-                  key={id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="relative w-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
-                >
-                  {/* Show Spinner until video loads */}
+               <motion.div
+  key={id}
+  initial={{
+    opacity: 0,
+    scale: 0.85,
+    filter: "blur(8px)",
+    ...directions[index % directions.length], // index ke basis pe direction change
+  }}
+  whileInView={{
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    y: 0,
+    rotate: 0,
+    filter: "blur(0px)",
+  }}
+  transition={{
+    duration: 1.1,
+    ease: [0.22, 1, 0.36, 1], // smooth arc easing
+    delay: index * 0.15,      // stagger
+  }}
+  viewport={{ once: false, amount: 0.3 }}
+  className="relative w-full bg-white border border-gray-200 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
+>
+                  {/* Spinner until video loads */}
                   {isLoading && (
                     <div className="absolute inset-0 z-10 bg-black bg-opacity-40 flex items-center justify-center">
                       <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -123,7 +163,7 @@ const Projects = () => {
                     loop
                     muted
                     playsInline
-                    onCanPlayThrough={() => setIsLoading(false)} // Jab load ho jaye to spinner hata do
+                    onCanPlayThrough={() => setIsLoading(false)}
                   />
 
                   {/* Text Content */}

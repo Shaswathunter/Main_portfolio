@@ -15,11 +15,11 @@ const Navbar = () => {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="flex justify-between items-center w-full h-20 px-4 text-textPrimary"
+   <motion.nav
+      initial={{ y: -80, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex justify-between items-center w-full h-20 px-4 text-textPrimary bg-transparent"
     >
       <div>
         <h1 className="text-5xl font-signature ml-2 text-secondary">SG.</h1>
