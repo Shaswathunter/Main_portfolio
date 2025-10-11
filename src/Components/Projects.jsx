@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import blog from "../assets/blog-app.mp4";
 import soon from "../assets/soon.mp4";
-
+import Ai from "../assets/Ai.mp4";
 const Projects = () => {
   const projects = [
     {
@@ -16,12 +16,12 @@ const Projects = () => {
     },
     {
       id: 2,
-      title: "WhatsApp Clone",
+      title: "Ai Code Reviewer",
       description:
-        "A clone of the popular messaging app with real-time chat features.",
-      video: `${soon}`,
-      demoLink: "#",
-      codeLink: "#",
+        "An Google Gemini 2.5 AI-powered  code review tool that helps developers improve their code quality.",
+      video: `${Ai}`,
+      demoLink: "https://ai-reviewer-neon.vercel.app/",
+      codeLink: "https://github.com/Shaswathunter/Ai-Reviewer.git",
     },
     {
       id: 3,
