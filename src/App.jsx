@@ -3,48 +3,27 @@ import Navbar from "./Components/Navbar";
 import Hero from "./Components/Hero";
 import Skills from "./Components/Skills";
 import Projects from "./Components/Projects";
-// import Experience from './Components/Experience'
 import About from "./Components/About";
 import NeonGlowBackground from "./Components/NeonBackground";
 import ContactForm from "./Components/ContactForm.jsx";
 import { Toaster } from "react-hot-toast";
 import BackToTop from "./Components/backToTop.jsx";
+import ChatBot from "./Components/ChatBot.jsx";
 
 function App() {
   return (
     <NeonGlowBackground>
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
+      <div id="home"><Hero /></div>
+      <div id="about"><About /></div>
+      <div id="skills"><Skills /></div>
+      <div id="projects"><Projects /></div>
+      <div id="contact"><ContactForm /></div>
+      <BackToTop />
 
-      {/* Each section wrapped in <Element name="..."> */}
-      <div id="home">
-        <Hero />
-      </div>
-
-      <div id="about" >
-        <About />
-      </div>
-
-      <div id="skills">
-        <Skills />
-      </div>
-
-      <div id="projects">
-        <Projects />
-      </div>
-
-      {/* <Element name="experience">
-        <Experience />
-      </Element> */}
-
-      <div id="contact">
-        <ContactForm />
-      </div>
-    
-      <div>
-        <BackToTop /> {/* ✅ Button added here */}
-      </div>
-      
+      {/* Floating ChatBot */}
+      <ChatBot />
     </NeonGlowBackground>
   );
 }
