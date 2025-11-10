@@ -55,6 +55,17 @@ const Chatbot: React.FC = () => {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
+    // 🕹️ Easter Egg Trigger (Hidden Runner Game)
+if (input.toLowerCase().includes("play") || input.toLowerCase().includes("run") || input.toLowerCase().includes("game")) {
+  const botMsg = { sender: "bot", text: "🎮 Opening the hidden runner game... Enjoy!" };
+  setMessages((prev) => [...prev, botMsg]);
+  setTimeout(() => {
+    window.open("/hidden-runner", "_blank");
+  }, 1000);
+  setIsTyping(false);
+  return;
+}
+
 
     setTimeout(() => {
       const botMsg = { sender: "bot", text: getBestReply(userMsg.text) };
@@ -192,7 +203,7 @@ const Chatbot: React.FC = () => {
       </AnimatePresence>
 
       {/* Custom CSS Animations */}
-      <style jsx>{`
+      <style >{`
       @keyframes glowPulse {
   0% {
     box-shadow: 0 0 8px rgba(99, 102, 241, 0.6),

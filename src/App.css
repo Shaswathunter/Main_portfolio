@@ -48,3 +48,21 @@ body { overflow: hidden; } /* container hi scroll karega */
 .read-the-docs {
   color: #888;
 } */
+
+/* Background game stays behind everything */
+.HiddenRunner {
+  z-index: 0;
+}
+
+/* All main portfolio sections appear above the game */
+#home,
+#about,
+#skills,
+#projects,
+#contact,
+nav,
+footer,
+.chatbot {
+  position: relative;
+  z-index: 10;
+}

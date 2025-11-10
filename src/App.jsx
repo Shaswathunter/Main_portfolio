@@ -9,10 +9,12 @@ import ContactForm from "./Components/ContactForm.jsx";
 import { Toaster } from "react-hot-toast";
 import BackToTop from "./Components/backToTop.jsx";
 import ChatBot from "./Components/ChatBot.jsx";
+import HiddenRunner from "./Components/HiddenRunner.jsx";
 
 function App() {
-  return (
+   return (
     <NeonGlowBackground>
+      <HiddenRunner /> {/* Background Game */}
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <div id="home"><Hero /></div>
@@ -21,8 +23,6 @@ function App() {
       <div id="projects"><Projects /></div>
       <div id="contact"><ContactForm /></div>
       <BackToTop />
-
-      {/* Floating ChatBot */}
       <ChatBot />
     </NeonGlowBackground>
   );
