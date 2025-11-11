@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import pic from "../assets/im2.png";
 import Resume from "../assets/Resume.pdf";
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaTwitter, FaDownload } from "react-icons/fa";
 import { MdMessage } from "react-icons/md";
 import Typical from "react-typical";
 
@@ -11,14 +11,16 @@ const Hero = () => {
     { icon: <FaLinkedin />, href: "https://linkedin.com/in/codershaswat" },
     { icon: <FaGithub />, href: "https://github.com/Shaswathunter" },
     { icon: <FaTwitter />, href: "https://x.com/CoderShaswat" },
-    { icon: <MdMessage />, href: "mailto:Shaswat2016@gmail.com" }, 
+    { icon: <MdMessage />, href: "mailto:Shaswat2016@gmail.com" },
   ];
+
+  const resumeUrl = Resume; // Resume PDF
 
   return (
     <div className="relative h-screen w-full overflow-hidden text-white">
       {/* 🌟 Hero Content */}
       <div className="relative z-20 max-w-screen-xl mx-auto flex flex-col items-center justify-center h-full px-6 md:flex-row">
-        
+
         {/* 💬 Left Side Text */}
         <motion.div
           initial={{ x: -120, opacity: 0 }}
@@ -66,7 +68,7 @@ const Hero = () => {
             initial={{ y: 80, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col md:flex-row gap-2 mt-6 items-center md:items-start"
+            className="flex flex-col md:flex-row gap-4 mt-6 items-center md:items-start"
           >
             <motion.button
               onClick={() => {
@@ -79,14 +81,29 @@ const Hero = () => {
             >
               Explore Projects
             </motion.button>
-            <motion.button
-              onClick={() => window.open(Resume, "_blank")}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
-            >
-              View Resume
-            </motion.button>
+
+            {/* ✅ View + Download Resume Button */}
+      <motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md flex items-center gap-3"
+  onClick={() => window.open(resumeUrl, "_blank")}
+>
+  View Resume
+  <motion.a
+    href={resumeUrl}
+    download
+    onClick={(e) => e.stopPropagation()}
+    className="text-white flex items-center justify-center"
+    animate={{ y: [0, -5, 0], rotate: [0, 10, -10, 0] }} // float + slight tilt
+    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+    whileHover={{ scale: 1.3, color: "#facc15" }} // hover pop
+  >
+    <FaDownload size={20} />
+  </motion.a>
+</motion.button>
+
+
             <motion.button
               onClick={() => {
                 const section = document.getElementById("contact");
@@ -124,18 +141,17 @@ const Hero = () => {
 
         {/* 🧍‍♂️ Profile Image */}
         <motion.div
-  initial={{ x: 120, opacity: 0, scale: 0.8, y: 30 }} // 👈 Added y: 30
-  whileInView={{ x: 0, opacity: 1, scale: 1, y: -140 }} // 👈 Moves upward
-  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-  className="hidden sm:flex w-full md:w-2/3 justify-center mt-10"
->
-  <img
-    src={pic}
-    alt="profile"
-    className="rounded-full w-2/3 md:w-full hover:scale-105 transition duration-300"
-  />
-</motion.div>
-
+          initial={{ x: 120, opacity: 0, scale: 0.8, y: 30 }}
+          whileInView={{ x: 0, opacity: 1, scale: 1, y: -140 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden sm:flex w-full md:w-2/3 justify-center mt-10"
+        >
+          <img
+            src={pic}
+            alt="profile"
+            className="rounded-full w-2/3 md:w-full hover:scale-105 transition duration-300"
+          />
+        </motion.div>
       </div>
     </div>
   );

@@ -32,7 +32,6 @@ const HiddenRunner = () => {
 
     const initialGap = isMobile ? 500 : 700;
 
-    // Start with 1 obstacle for mobile and desktop
     let obstacles = [
       {
         x: canvas.width + initialGap,
@@ -44,6 +43,7 @@ const HiddenRunner = () => {
     ];
 
     let score = 0;
+    let highScore = 0;
     let gameOver = false;
 
     const jump = () => {
@@ -145,11 +145,10 @@ const HiddenRunner = () => {
       }
 
       // Move obstacles
-      obstacles.forEach((ob, i) => {
+      obstacles.forEach((ob) => {
         ob.x -= ob.speed;
 
         if (ob.x + ob.width < 0) {
-          // Chance to add a second obstacle for desktop after score 5
           if (!isMobile && score > 5 && Math.random() < 0.3 && obstacles.length < 2) {
             obstacles.push({
               x: canvas.width + 200 + Math.random() * 200,
@@ -159,18 +158,12 @@ const HiddenRunner = () => {
               speed: ob.speed,
             });
           }
-
-          // Reset current obstacle
           ob.x = canvas.width + 400 + Math.random() * 200;
-
-          // Gradually increase speed
           ob.speed += isMobile ? 0.05 : 0.1;
-
           score++;
         }
       });
 
-      // Remove second obstacle if far off screen
       if (obstacles.length > 1 && obstacles[1].x + obstacles[1].width < 0) {
         obstacles.splice(1, 1);
       }
@@ -178,13 +171,15 @@ const HiddenRunner = () => {
       drawStickman();
       drawObstacles();
 
-      // Score
+      // Score & High Score
       ctx.font = isMobile ? "14px monospace" : "18px monospace";
       ctx.fillStyle = "white";
-      ctx.fillText(`Score: ${score}`, 20, 40);
+      ctx.fillText(`Score: ${score}`, 20, isMobile ? 40 : 70);
+      ctx.fillText(`High Score: ${highScore}`, 20, isMobile ? 60 : 100);
 
       if (detectCollision()) {
         gameOver = true;
+        if (score > highScore) highScore = score; // update high score
         cancelAnimationFrame(animationRef.current);
 
         ctx.font = isMobile ? "22px monospace" : "32px monospace";
@@ -196,11 +191,13 @@ const HiddenRunner = () => {
         ctx.fillStyle = "white";
         ctx.font = isMobile ? "18px monospace" : "24px monospace";
         ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+        ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, canvas.height / 2 + 50);
+
         ctx.font = isMobile ? "14px monospace" : "18px monospace";
         ctx.fillText(
           "Press Space / Enter / Tap to Restart",
           canvas.width / 2,
-          canvas.height / 2 + 60
+          canvas.height / 2 + 80
         );
         return;
       }
