@@ -27,9 +27,8 @@ const HiddenRunner = () => {
       frame: 0,
     };
 
-    // 🧲 Gravity & Jump Power (smooth jump)
-    const gravity = isMobile ? 0.6 : 0.7;   // slower fall for smooth landing
-    const jumpPower = isMobile ? -15 : -18; // balanced jump height
+    const gravity = isMobile ? 0.6 : 0.7;
+    const jumpPower = isMobile ? -15 : -18;
 
     let obstacle = {
       x: canvas.width + (isMobile ? 500 : 700),
@@ -52,7 +51,6 @@ const HiddenRunner = () => {
       }
     };
 
-    // 🧍‍♂️ Stickman Drawing
     const drawStickman = () => {
       ctx.lineWidth = isMobile ? 2.5 : 4;
       ctx.strokeStyle = "white";
@@ -156,28 +154,28 @@ const HiddenRunner = () => {
       ctx.font = isMobile ? "14px monospace" : "18px monospace";
       ctx.fillStyle = "white";
       ctx.fillText(`Score: ${score}`, 20, 40);
-if (detectCollision()) {
-  gameOver = true;
-  cancelAnimationFrame(animationRef.current);
 
-  ctx.font = isMobile ? "22px monospace" : "32px monospace";
-  ctx.fillStyle = "red";
-  ctx.textAlign = "center";       // center horizontally
-  ctx.textBaseline = "middle";    // center vertically
-  ctx.fillText("💀 Game Over", canvas.width / 2, canvas.height / 2 - 20);
+      if (detectCollision()) {
+        gameOver = true;
+        cancelAnimationFrame(animationRef.current);
 
-  ctx.fillStyle = "white";
-  ctx.font = isMobile ? "18px monospace" : "24px monospace";
-  ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-  ctx.font = isMobile ? "14px monospace" : "18px monospace";
-  ctx.fillText(
-    "Press Space / Enter / Tap to Restart",
-    canvas.width / 2,
-    canvas.height / 2 + 60
-  );
-  return;
-}
+        ctx.font = isMobile ? "22px monospace" : "32px monospace";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("💀 Game Over", canvas.width / 2, canvas.height / 2 - 20);
 
+        ctx.fillStyle = "white";
+        ctx.font = isMobile ? "18px monospace" : "24px monospace";
+        ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+        ctx.font = isMobile ? "14px monospace" : "18px monospace";
+        ctx.fillText(
+          "Press Space / Enter / Tap to Restart",
+          canvas.width / 2,
+          canvas.height / 2 + 60
+        );
+        return;
+      }
 
       if (!gameOver) {
         animationRef.current = requestAnimationFrame(update);
@@ -204,14 +202,12 @@ if (detectCollision()) {
       }
     };
 
-    // Mobile & Click jump
-    const handleTouch = (e) => {
-      e.preventDefault();
+    const handleTouch = () => {
       jump();
     };
 
     window.addEventListener("keydown", handleKey);
-    window.addEventListener("touchstart", handleTouch, { passive: false });
+    window.addEventListener("touchstart", handleTouch, { passive: true });
     window.addEventListener("click", handleTouch);
 
     update();
@@ -229,16 +225,15 @@ if (detectCollision()) {
     <canvas
       ref={canvasRef}
       style={{
-  position: "fixed",
-  top: 0,
-  left: 0,
-  zIndex: -1,
-  width: "100%",
-  height: "100%",
-  background: "transparent",
-  pointerEvents: "none" // <<< key!
-}}
-
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: -1,
+        width: "100%",
+        height: "100%",
+        background: "transparent",
+        pointerEvents: "none", // allows scrolling
+      }}
     />
   );
 };
