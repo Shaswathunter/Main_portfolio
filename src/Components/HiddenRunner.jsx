@@ -156,22 +156,28 @@ const HiddenRunner = () => {
       ctx.font = isMobile ? "14px monospace" : "18px monospace";
       ctx.fillStyle = "white";
       ctx.fillText(`Score: ${score}`, 20, 40);
+if (detectCollision()) {
+  gameOver = true;
+  cancelAnimationFrame(animationRef.current);
 
-      if (detectCollision()) {
-        gameOver = true;
-        cancelAnimationFrame(animationRef.current);
-        ctx.font = isMobile ? "22px monospace" : "32px monospace";
-        ctx.fillStyle = "red";
-        ctx.fillText("💀 Game Over", canvas.width / 2 - 100, canvas.height / 2);
-        ctx.fillStyle = "white";
-        ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 40);
-        ctx.fillText(
-          "Press Space / Enter / Tap to Restart",
-          canvas.width / 2 - 180,
-          canvas.height / 2 + 80
-        );
-        return;
-      }
+  ctx.font = isMobile ? "22px monospace" : "32px monospace";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";       // center horizontally
+  ctx.textBaseline = "middle";    // center vertically
+  ctx.fillText("💀 Game Over", canvas.width / 2, canvas.height / 2 - 20);
+
+  ctx.fillStyle = "white";
+  ctx.font = isMobile ? "18px monospace" : "24px monospace";
+  ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+  ctx.font = isMobile ? "14px monospace" : "18px monospace";
+  ctx.fillText(
+    "Press Space / Enter / Tap to Restart",
+    canvas.width / 2,
+    canvas.height / 2 + 60
+  );
+  return;
+}
+
 
       if (!gameOver) {
         animationRef.current = requestAnimationFrame(update);
@@ -223,14 +229,16 @@ const HiddenRunner = () => {
     <canvas
       ref={canvasRef}
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: -1,
-        width: "100%",
-        height: "100%",
-        background: "transparent",
-      }}
+  position: "fixed",
+  top: 0,
+  left: 0,
+  zIndex: -1,
+  width: "100%",
+  height: "100%",
+  background: "transparent",
+  pointerEvents: "none" // <<< key!
+}}
+
     />
   );
 };
