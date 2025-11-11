@@ -30,17 +30,21 @@ const HiddenRunner = () => {
     const gravity = isMobile ? 0.6 : 0.7;
     const jumpPower = isMobile ? -15 : -18;
 
-    let obstacle = {
-      x: canvas.width + (isMobile ? 500 : 700),
-      y: canvas.height - (isMobile ? 60 : 80),
-      width: isMobile ? 25 : 35,
-      height: isMobile ? 40 : 55,
-      speed: isMobile ? 3.5 : 5.5,
-    };
+    const initialGap = isMobile ? 500 : 700;
+
+    // Start with 1 obstacle for mobile and desktop
+    let obstacles = [
+      {
+        x: canvas.width + initialGap,
+        y: canvas.height - (isMobile ? 60 : 80),
+        width: isMobile ? 25 : 35,
+        height: isMobile ? 40 : 55,
+        speed: isMobile ? 3.5 : 5.5,
+      },
+    ];
 
     let score = 0;
     let gameOver = false;
-    let difficultyTimer = 0;
 
     const jump = () => {
       if (gameOver) {
@@ -98,26 +102,30 @@ const HiddenRunner = () => {
       ctx.shadowBlur = 0;
     };
 
-    const drawObstacle = () => {
-      ctx.fillStyle = "#ff2b4f";
-      ctx.shadowColor = "#ff2b4f";
-      ctx.shadowBlur = 8;
-      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-      ctx.shadowBlur = 0;
+    const drawObstacles = () => {
+      obstacles.forEach((ob) => {
+        ctx.fillStyle = "#ff2b4f";
+        ctx.shadowColor = "#ff2b4f";
+        ctx.shadowBlur = 8;
+        ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+        ctx.shadowBlur = 0;
+      });
     };
 
     const detectCollision = () => {
-      const smLeft = stickman.x - 10;
-      const smRight = stickman.x + 10;
-      const smTop = stickman.y - 12;
-      const smBottom = stickman.y + stickman.height + 15;
+      return obstacles.some((ob) => {
+        const smLeft = stickman.x - 10;
+        const smRight = stickman.x + 10;
+        const smTop = stickman.y - 12;
+        const smBottom = stickman.y + stickman.height + 15;
 
-      return (
-        smRight > obstacle.x &&
-        smLeft < obstacle.x + obstacle.width &&
-        smBottom > obstacle.y &&
-        smTop < obstacle.y + obstacle.height
-      );
+        return (
+          smRight > ob.x &&
+          smLeft < ob.x + ob.width &&
+          smBottom > ob.y &&
+          smTop < ob.y + ob.height
+        );
+      });
     };
 
     const update = () => {
@@ -136,19 +144,39 @@ const HiddenRunner = () => {
         stickman.jumping = false;
       }
 
-      obstacle.x -= obstacle.speed;
-      if (obstacle.x + obstacle.width < 0) {
-        obstacle.x = canvas.width + Math.random() * (isMobile ? 400 : 600);
-        score++;
-        difficultyTimer++;
+      // Move obstacles
+      obstacles.forEach((ob, i) => {
+        ob.x -= ob.speed;
 
-        if (difficultyTimer % 4 === 0 && obstacle.speed < (isMobile ? 6 : 9)) {
-          obstacle.speed += 0.3;
+        if (ob.x + ob.width < 0) {
+          // Chance to add a second obstacle for desktop after score 5
+          if (!isMobile && score > 5 && Math.random() < 0.3 && obstacles.length < 2) {
+            obstacles.push({
+              x: canvas.width + 200 + Math.random() * 200,
+              y: canvas.height - 80,
+              width: 35,
+              height: 55,
+              speed: ob.speed,
+            });
+          }
+
+          // Reset current obstacle
+          ob.x = canvas.width + 400 + Math.random() * 200;
+
+          // Gradually increase speed
+          ob.speed += isMobile ? 0.05 : 0.1;
+
+          score++;
         }
+      });
+
+      // Remove second obstacle if far off screen
+      if (obstacles.length > 1 && obstacles[1].x + obstacles[1].width < 0) {
+        obstacles.splice(1, 1);
       }
 
       drawStickman();
-      drawObstacle();
+      drawObstacles();
 
       // Score
       ctx.font = isMobile ? "14px monospace" : "18px monospace";
@@ -177,17 +205,22 @@ const HiddenRunner = () => {
         return;
       }
 
-      if (!gameOver) {
-        animationRef.current = requestAnimationFrame(update);
-      }
+      animationRef.current = requestAnimationFrame(update);
     };
 
     const restart = () => {
       cancelAnimationFrame(animationRef.current);
       score = 0;
       gameOver = false;
-      obstacle.x = canvas.width + (isMobile ? 500 : 700);
-      obstacle.speed = isMobile ? 3.5 : 5.5;
+      obstacles = [
+        {
+          x: canvas.width + initialGap,
+          y: canvas.height - (isMobile ? 60 : 80),
+          width: isMobile ? 25 : 35,
+          height: isMobile ? 40 : 55,
+          speed: isMobile ? 3.5 : 5.5,
+        },
+      ];
       stickman.y = canvas.height - (isMobile ? 100 : 150);
       stickman.vy = 0;
       stickman.jumping = false;
@@ -232,7 +265,7 @@ const HiddenRunner = () => {
         width: "100%",
         height: "100%",
         background: "transparent",
-        pointerEvents: "none", // allows scrolling
+        pointerEvents: "none",
       }}
     />
   );
