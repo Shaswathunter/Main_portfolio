@@ -1,5 +1,5 @@
 import ticImg from "../assets/tic.png";
-import memoryImg from "../assets/memory.png";
+import memoryImg from "../assets/Memory.png";
 import simonImg from "../assets/simon.png";
 import whackImg from "../assets/whake.png";
 import clickerImg from "../assets/clicker.png";

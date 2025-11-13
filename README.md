@@ -56,4 +56,8 @@ Git | GitHub | Vercel | Postman | Figma | Framer Motion
 
 ---
 
+<<<<<<< HEAD
 **“Code is like humor. When you have to explain it, it’s bad.” – Cory House**
+=======
+**“Code is like humor. When you have to explain it, it’s bad.” – Cory House**
+>>>>>>> eebc9dca65acc5615b868a6be3c206897e75b493
