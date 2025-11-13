@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-scroll";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Navbar = ({ onGamesClick }) => {
   const [nav, setNav] = useState(false);
@@ -16,23 +15,34 @@ const Navbar = ({ onGamesClick }) => {
   ];
 
   const handleClick = (link) => {
+    // Close mobile menu first
+    setNav(false);
+
     if (link === "games") {
       onGamesClick?.();
-    } else {
-      const section = document.getElementById(link);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-      }
+      return;
     }
+
+    // Wait for menu exit animation (if mobile) then scroll
+    setTimeout(() => {
+      const section = document.getElementById(link);
+      if (section) section.scrollIntoView({ behavior: "smooth" });
+    }, 300); // match mobile menu exit duration
   };
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = nav ? "hidden" : "auto";
+  }, [nav]);
 
   return (
     <motion.nav
       initial={{ y: -80, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="flex justify-between items-center w-full h-20 px-4 text-textPrimary bg-transparent"
+      className="flex justify-between items-center w-full h-20 px-4 text-textPrimary bg-transparent fixed top-0 left-0 z-50"
     >
+      {/* Logo */}
       <div>
         <h1 className="text-5xl font-signature ml-2 text-secondary">SG.</h1>
       </div>
@@ -44,69 +54,55 @@ const Navbar = ({ onGamesClick }) => {
             key={id}
             className="px-4 cursor-pointer capitalize font-medium text-textSecondary hover:text-secondary duration-200"
           >
-            {link === "games" ? (
-              <span onClick={() => handleClick(link)}>Play More Games</span>
-            ) : (
-              <Link
-                to={link}
-                smooth={true}
-                offset={-70}
-                duration={500}
-                spy={true}
-                activeClass="text-secondary font-bold"
-              >
-                {link}
-              </Link>
-            )}
+            <button onClick={() => handleClick(link)}>
+              {link === "games" ? "Play More Games" : link.charAt(0).toUpperCase() + link.slice(1)}
+            </button>
           </li>
         ))}
       </ul>
 
       {/* Hamburger Icon */}
-      <div
-        onClick={() => setNav(!nav)}
-        className="cursor-pointer pr-4 z-10 text-textSecondary md:hidden"
-      >
-        {nav ? <FaTimes size={30} /> : <FaBars size={30} />}
-      </div>
+      {!nav && (
+        <div
+          onClick={() => setNav(true)}
+          className="cursor-pointer pr-4 text-textSecondary md:hidden z-50"
+        >
+          <FaBars size={30} />
+        </div>
+      )}
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {nav && (
-          <motion.ul
+          <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 w-full h-screen bg-primary flex flex-col justify-center items-center space-y-8 text-2xl text-textSecondary font-semibold z-40 md:hidden"
+            className="fixed top-0 right-0 w-full h-full bg-primary flex flex-col items-center z-50 pt-10"
           >
-            {links.map(({ id, link }) => (
-              <li key={id}>
-                {link === "games" ? (
-                  <span
-                    onClick={() => {
-                      handleClick(link);
-                      setNav(false);
-                    }}
-                    className="hover:text-secondary transition-all duration-200"
+            {/* Close Button */}
+            <div
+              onClick={() => setNav(false)}
+              className="absolute top-6 right-6 cursor-pointer text-textSecondary z-50"
+            >
+              <FaTimes size={30} />
+            </div>
+
+            {/* Mobile links */}
+            <ul className="flex flex-col justify-center items-center space-y-8 w-full mt-20">
+              {links.map(({ id, link }) => (
+                <li key={id} className="list-none">
+                  <button
+                    onClick={() => handleClick(link)}
+                    className="hover:text-secondary transition-all duration-200 cursor-pointer px-4 py-2 text-center"
                   >
-                    Play More Games
-                  </span>
-                ) : (
-                  <Link
-                    to={link}
-                    smooth={true}
-                    offset={-70}
-                    duration={500}
-                    onClick={() => setNav(false)}
-                    className="hover:text-secondary transition-all duration-200"
-                  >
-                    {link}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </motion.ul>
+                    {link === "games" ? "Play More Games" : link.charAt(0).toUpperCase() + link.slice(1)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.nav>

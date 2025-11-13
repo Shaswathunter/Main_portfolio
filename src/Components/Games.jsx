@@ -39,9 +39,7 @@ function PortfolioGamesComponent() {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
-            <h2 className="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-              🎮 Play 9 Mini Games
-            </h2>
+           
             <p className="text-gray-400 text-center max-w-md mx-auto">
               Each of these is a mini React project — click to play instantly!
             </p>
