@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { motion , AnimatePresence} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-scroll"; // ✅ Import
+import { Link } from "react-scroll";
+import React, { useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ onGamesClick }) => {
   const [nav, setNav] = useState(false);
 
   const links = [
     { id: "home", link: "home" },
+    { id: "games", link: "games" },
     { id: "about", link: "about" },
     { id: "skills", link: "skills" },
     { id: "projects", link: "projects" },
     { id: "contact", link: "contact" },
   ];
 
+  const handleClick = (link) => {
+    if (link === "games") {
+      onGamesClick?.();
+    } else {
+      const section = document.getElementById(link);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
-   <motion.nav
+    <motion.nav
       initial={{ y: -80, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -32,20 +44,20 @@ const Navbar = () => {
             key={id}
             className="px-4 cursor-pointer capitalize font-medium text-textSecondary hover:text-secondary duration-200"
           >
-            <Link
-              onClick={() => {
-    const section = document.getElementById(link);
-    section?.scrollIntoView({ behavior: "smooth" })
-    ;
-  }}
-              smooth={true}
-              offset={-70}
-              duration={500}
-              spy={true} // 🟢 enables scroll tracking
-              activeClass="text-secondary font-bold" // 🟢 applies this class when section is active
-            >
-              {link}
-            </Link>
+            {link === "games" ? (
+              <span onClick={() => handleClick(link)}>Play More Games</span>
+            ) : (
+              <Link
+                to={link}
+                smooth={true}
+                offset={-70}
+                duration={500}
+                spy={true}
+                activeClass="text-secondary font-bold"
+              >
+                {link}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
@@ -59,7 +71,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-          <AnimatePresence>
+      <AnimatePresence>
         {nav && (
           <motion.ul
             initial={{ x: "100%" }}
@@ -70,20 +82,28 @@ const Navbar = () => {
           >
             {links.map(({ id, link }) => (
               <li key={id}>
-                <Link
-                  onClick={() => {
-    const section = document.getElementById(link);
-    section?.scrollIntoView({ behavior: "smooth" })
-    setNav(false);
-  }}
-                  smooth={true}
-                  offset={-70}
-                  duration={500}
-                 
-                  className="hover:text-secondary transition-all duration-200"
-                >
-                  {link}
-                </Link>
+                {link === "games" ? (
+                  <span
+                    onClick={() => {
+                      handleClick(link);
+                      setNav(false);
+                    }}
+                    className="hover:text-secondary transition-all duration-200"
+                  >
+                    Play More Games
+                  </span>
+                ) : (
+                  <Link
+                    to={link}
+                    smooth={true}
+                    offset={-70}
+                    duration={500}
+                    onClick={() => setNav(false)}
+                    className="hover:text-secondary transition-all duration-200"
+                  >
+                    {link}
+                  </Link>
+                )}
               </li>
             ))}
           </motion.ul>
