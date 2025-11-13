@@ -1,12 +1,59 @@
-# React + Vite
+# Shaswat Dr. Gautam 🌐
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shaswat-gautam) 
+[![GitHub](https://img.shields.io/badge/GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ShaswatGautam)
+[![Portfolio](https://img.shields.io/badge/Portfolio-purple?style=for-the-badge&logo=google-chrome&logoColor=white)](https://shaswat-portfolio-mu.vercel.app)
 
-Currently, two official plugins are available:
+Hi, I’m **Shaswat Dr. Gautam**, a passionate **Full Stack Developer** and Web Developer.  
+I build modern, responsive, and interactive web applications using **MERN stack** and other web technologies.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 👨‍💻 About Me
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Full Stack Developer | MERN Stack
+- Enthusiastic about **web games and interactive UI**
+- Constantly learning **React.js, Next.js, Node.js, and Data Structures**
+- Passionate about **clean, efficient, and visually appealing code**
+
+---
+
+## 🛠 Tech Stack
+
+**Frontend:**  
+HTML5 | CSS3 | JavaScript | React.js | Tailwind CSS | Bootstrap  
+
+**Backend:**  
+Node.js | Express.js | MongoDB | REST APIs  
+
+**Tools & Others:**  
+Git | GitHub | Vercel | Postman | Figma | Framer Motion  
+
+---
+
+## 🖼 Portfolio Projects
+
+### 1. **Portfolio Website**
+- Personal portfolio showcasing my projects and skills
+- Features **AI assistant**, **chat bot**, and **interactive games**
+- Built with **React.js + Tailwind CSS**
+
+### 2. **Stickman Game**
+- Interactive game built with **JavaScript and Canvas**
+- Integrated directly into portfolio
+
+### 3. **Visual Email Flowchart App**
+- Frontend: **React Flow** | Backend: **Node.js + MongoDB**
+- Schedule emails using **Agenda + Nodemailer**
+
+---
+
+## 📫 Contact Me
+
+- **Email:** [your-email@example.com](mailto:your-email@example.com)  
+- **LinkedIn:** [Shaswat Dr. Gautam](https://www.linkedin.com/in/shaswat-gautam)  
+- **Portfolio:** [shaswat-portfolio-mu.vercel.app](https://shaswat-portfolio-mu.vercel.app)  
+
+---
+
+**“Code is like humor. When you have to explain it, it’s bad.” – Cory House**
