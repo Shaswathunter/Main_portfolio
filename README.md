@@ -1,4 +1,4 @@
-# Shaswat Dr. Gautam 🌐
+# Shaswat DR Gautam 🌐
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shaswat-gautam) 
 [![GitHub](https://img.shields.io/badge/GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ShaswatGautam)
