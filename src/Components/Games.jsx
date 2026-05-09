@@ -1083,108 +1083,1062 @@ function MemoryMatch() {
 
 /* ---------- 3) Simon Says ---------- */
 function SimonGame() {
-  const colors = ["red", "green", "blue", "yellow"];
-  const [seq, setSeq] = useState([]);
-  const [user, setUser] = useState([]);
-  const [active, setActive] = useState(null);
-  const [score, setScore] = useState(0);
 
-  const play = (i) => {
-    setUser([...user, i]);
-    if (seq[user.length] !== i) {
-      alert("Wrong! Score: " + score);
-      reset();
-    } else if (user.length + 1 === seq.length) {
-      setScore(score + 1);
-      nextRound();
+  const pads = [
+
+    {
+      color: "#ef4444",
+      glow: "rgba(239,68,68,0.55)",
+      label: "RED",
+    },
+
+    {
+      color: "#22c55e",
+      glow: "rgba(34,197,94,0.55)",
+      label: "GREEN",
+    },
+
+    {
+      color: "#3b82f6",
+      glow: "rgba(59,130,246,0.55)",
+      label: "BLUE",
+    },
+
+    {
+      color: "#eab308",
+      glow: "rgba(234,179,8,0.55)",
+      label: "YELLOW",
+    },
+  ];
+
+  /* ================= STATES ================= */
+
+  const [sequence, setSequence] =
+    useState([]);
+
+  const [user, setUser] =
+    useState([]);
+
+  const [active, setActive] =
+    useState(null);
+
+  const [score, setScore] =
+    useState(0);
+
+  const [started, setStarted] =
+    useState(false);
+
+  const [gameOver, setGameOver] =
+    useState(false);
+
+  const [locked, setLocked] =
+    useState(false);
+
+  /* ================= PLAY SEQUENCE ================= */
+
+  const playSequence = async (
+    seq
+  ) => {
+
+    setLocked(true);
+
+    for (
+      let i = 0;
+      i < seq.length;
+      i++
+    ) {
+
+      const current = seq[i];
+
+      setActive(current);
+
+      gsap.fromTo(
+        `.simon-${current}`,
+        { scale: 1 },
+        {
+          scale: 1.05,
+          duration: 0.15,
+          repeat: 1,
+          yoyo: true,
+        }
+      );
+
+      await new Promise((r) =>
+        setTimeout(r, 550)
+      );
+
+      setActive(null);
+
+      await new Promise((r) =>
+        setTimeout(r, 180)
+      );
+    }
+
+    setLocked(false);
+  };
+
+  /* ================= NEXT ROUND ================= */
+
+  const nextRound = async () => {
+
+    const next =
+      Math.floor(
+        Math.random() * 4
+      );
+
+    const updated = [
+      ...sequence,
+      next,
+    ];
+
+    setSequence(updated);
+
+    setUser([]);
+
+    await playSequence(updated);
+  };
+
+  /* ================= START ================= */
+
+  const startGame = async () => {
+
+    setStarted(true);
+
+    setGameOver(false);
+
+    setScore(0);
+
+    setSequence([]);
+
+    setUser([]);
+
+    const first =
+      Math.floor(
+        Math.random() * 4
+      );
+
+    const newSeq = [first];
+
+    setSequence(newSeq);
+
+    await playSequence(newSeq);
+  };
+
+  /* ================= HANDLE CLICK ================= */
+
+  const handleClick = async (
+    index
+  ) => {
+
+    if (
+      locked ||
+      gameOver ||
+      !started
+    ) {
+      return;
+    }
+
+    const updatedUser = [
+      ...user,
+      index,
+    ];
+
+    setUser(updatedUser);
+
+    /* pad animation */
+
+    setActive(index);
+
+    gsap.fromTo(
+      `.simon-${index}`,
+      { scale: 1 },
+      {
+        scale: 1.08,
+        duration: 0.12,
+        repeat: 1,
+        yoyo: true,
+      }
+    );
+
+    setTimeout(() => {
+      setActive(null);
+    }, 180);
+
+    /* wrong */
+
+    if (
+      sequence[
+        updatedUser.length - 1
+      ] !== index
+    ) {
+
+      setGameOver(true);
+
+      setStarted(false);
+
+      gsap.fromTo(
+        ".simon-board",
+        { x: -8 },
+        {
+          x: 8,
+          duration: 0.08,
+          repeat: 5,
+          yoyo: true,
+        }
+      );
+
+      return;
+    }
+
+    /* complete */
+
+    if (
+      updatedUser.length ===
+      sequence.length
+    ) {
+
+      setScore(
+        (prev) => prev + 1
+      );
+
+      setLocked(true);
+
+      setTimeout(async () => {
+
+        await nextRound();
+
+      }, 900);
     }
   };
 
-  const nextRound = () => {
-    const next = Math.floor(Math.random() * 4);
-    const newSeq = [...seq, next];
-    setSeq(newSeq);
-    setUser([]);
-    let i = 0;
-    const interval = setInterval(() => {
-      setActive(newSeq[i]);
-      setTimeout(() => setActive(null), 300);
-      i++;
-      if (i >= newSeq.length) clearInterval(interval);
-    }, 600);
-  };
-
-  const reset = () => {
-    setSeq([]);
-    setUser([]);
-    setScore(0);
-  };
-
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-semibold mb-3">Simon Says</h3>
-      <div className="grid grid-cols-2 gap-2">
-        {colors.map((c, i) => (
-          <button
-            key={i}
-            onClick={() => play(i)}
-            className={`w-20 h-20 rounded-lg ${
-              active === i ? `${c}-400` : `${c}-600`
-            } transition`}
-            style={{
-              backgroundColor: active === i ? c : `${c}`,
-              opacity: active === i ? 0.6 : 1,
-            }}
-          />
-        ))}
+
+    <motion.div
+
+      initial={{
+        opacity: 0,
+        scale: 0.9,
+      }}
+
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+
+      transition={{
+        duration: 0.4,
+      }}
+
+      className="
+        relative
+        flex
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-2
+      "
+    >
+
+      {/* GLOW */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          -z-10
+          rounded-full
+          bg-cyan-500/10
+          blur-3xl
+        "
+      />
+
+      {/* TOP */}
+
+      <div className="mb-5 text-center">
+
+        <h3
+          className="
+            text-2xl
+            font-black
+            text-cyan-400
+
+            sm:text-3xl
+          "
+        >
+          Simon Says
+        </h3>
+
+        {/* SCORE */}
+
+        <div
+          className="
+            mt-3
+            rounded-2xl
+            border
+            border-cyan-400/10
+            bg-cyan-500/10
+            px-5
+            py-2
+            backdrop-blur-xl
+          "
+        >
+
+          <p
+            className="
+              text-sm
+              font-medium
+              text-cyan-300
+            "
+          >
+            Score: {score}
+          </p>
+
+        </div>
       </div>
-      <p className="mt-3 text-sm">Score: {score}</p>
-      <button
-        onClick={nextRound}
-        className="mt-2 px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+
+      {/* BOARD */}
+
+      <div
+        className="
+          simon-board
+
+          grid
+          grid-cols-2
+          gap-3
+
+          rounded-[30px]
+
+          border
+          border-white/10
+
+          bg-white/[0.04]
+
+          p-4
+
+          backdrop-blur-2xl
+
+          shadow-[0_0_60px_rgba(6,182,212,0.16)]
+
+          w-full
+          max-w-[320px]
+
+          sm:max-w-[420px]
+        "
       >
-        Start
-      </button>
-    </div>
+
+        {pads.map((pad, i) => {
+
+          const activeNow =
+            active === i;
+
+          return (
+
+            <motion.button
+
+              key={i}
+
+              whileHover={{
+                scale: 1.04,
+              }}
+
+              whileTap={{
+                scale: 0.96,
+              }}
+
+              onClick={() =>
+                handleClick(i)
+              }
+
+              className={`
+                simon-${i}
+
+                aspect-square
+                w-full
+
+                rounded-3xl
+
+                border
+                border-white/10
+
+                relative
+                overflow-hidden
+              `}
+
+              style={{
+
+                background:
+                  activeNow
+
+                    ? `linear-gradient(135deg,
+                      ${pad.color},
+                      #ffffff
+                    )`
+
+                    : `linear-gradient(135deg,
+                      ${pad.color},
+                      ${pad.color}aa
+                    )`,
+
+                boxShadow:
+                  activeNow
+
+                    ? `0 0 40px ${pad.glow}`
+
+                    : `0 0 20px ${pad.glow}`,
+              }}
+            >
+
+              {/* SHINE */}
+
+              <div
+                className="
+                  absolute
+                  inset-0
+                  bg-white/10
+                "
+              />
+
+              {/* LABEL */}
+
+              <span
+                className="
+                  absolute
+                  bottom-3
+                  left-1/2
+
+                  -translate-x-1/2
+
+                  text-xs
+                  font-black
+                  tracking-[2px]
+                  text-white
+
+                  sm:text-sm
+                "
+              >
+                {pad.label}
+              </span>
+
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* GAME OVER */}
+
+      {gameOver && (
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            mt-5
+            rounded-2xl
+            border
+            border-red-400/20
+            bg-red-500/10
+            px-5
+            py-3
+            text-red-300
+            backdrop-blur-xl
+          "
+        >
+
+          💀 Wrong Move!
+
+        </motion.div>
+      )}
+
+      {/* START BUTTON */}
+
+      <motion.button
+
+        whileHover={{
+          scale: 1.05,
+        }}
+
+        whileTap={{
+          scale: 0.95,
+        }}
+
+        onClick={startGame}
+
+        className="
+          mt-5
+          rounded-xl
+          bg-cyan-500
+          px-5
+          py-2
+          text-sm
+          font-semibold
+          text-white
+
+          shadow-[0_0_25px_rgba(6,182,212,0.35)]
+
+          sm:text-base
+        "
+      >
+
+        {started
+          ? "Restart"
+          : "Start Game"}
+
+      </motion.button>
+
+    </motion.div>
   );
 }
 
 /* ---------- 4) Whack a Mole ---------- */
 function WhackAMole() {
-  const [holes, setHoles] = useState(Array(9).fill(false));
-  const [score, setScore] = useState(0);
+
+  /* ================= STATES ================= */
+
+  const [holes, setHoles] =
+    useState(Array(9).fill(false));
+
+  const [score, setScore] =
+    useState(0);
+
+  const [timeLeft, setTimeLeft] =
+    useState(30);
+
+  const [started, setStarted] =
+    useState(false);
+
+  const [gameOver, setGameOver] =
+    useState(false);
+
+  const [bestScore, setBestScore] =
+    useState(0);
+
+  /* ================= START GAME ================= */
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const i = Math.floor(Math.random() * 9);
-      const h = Array(9).fill(false);
-      h[i] = true;
-      setHoles(h);
-      setTimeout(() => setHoles(Array(9).fill(false)), 600);
+
+    if (!started || gameOver) return;
+
+    /* countdown */
+
+    const timer = setInterval(() => {
+
+      setTimeLeft((prev) => {
+
+        if (prev <= 1) {
+
+          clearInterval(timer);
+
+          setGameOver(true);
+
+          setStarted(false);
+
+          setBestScore((b) =>
+            Math.max(b, score)
+          );
+
+          return 0;
+        }
+
+        return prev - 1;
+      });
+
     }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+
+    return () =>
+      clearInterval(timer);
+
+  }, [started, gameOver, score]);
+
+  /* ================= MOLE LOOP ================= */
+
+  useEffect(() => {
+
+    if (!started || gameOver) return;
+
+    const interval = setInterval(() => {
+
+      const index =
+        Math.floor(
+          Math.random() * 9
+        );
+
+      const updated =
+        Array(9).fill(false);
+
+      updated[index] = true;
+
+      setHoles(updated);
+
+      gsap.fromTo(
+        `.mole-${index}`,
+        {
+          y: 12,
+          scale: 0.7,
+        },
+        {
+          y: 0,
+          scale: 1,
+          duration: 0.22,
+          ease: "back.out(2)",
+        }
+      );
+
+      setTimeout(() => {
+
+        setHoles(
+          Array(9).fill(false)
+        );
+
+      }, 650);
+
+    }, 850);
+
+    return () =>
+      clearInterval(interval);
+
+  }, [started, gameOver]);
+
+  /* ================= HIT ================= */
 
   const hit = (i) => {
-    if (holes[i]) setScore(score + 1);
+
+    if (!holes[i]) return;
+
+    setScore((prev) => prev + 1);
+
+    /* smash animation */
+
+    gsap.fromTo(
+      `.mole-${i}`,
+      {
+        scale: 1,
+      },
+      {
+        scale: 0.4,
+        opacity: 0,
+        duration: 0.12,
+      }
+    );
+
+    /* screen bounce */
+
+    gsap.fromTo(
+      ".whack-board",
+      { scale: 1 },
+      {
+        scale: 1.02,
+        duration: 0.08,
+        repeat: 1,
+        yoyo: true,
+      }
+    );
+
+    const updated =
+      [...holes];
+
+    updated[i] = false;
+
+    setHoles(updated);
+  };
+
+  /* ================= RESET ================= */
+
+  const startGame = () => {
+
+    setScore(0);
+
+    setTimeLeft(30);
+
+    setGameOver(false);
+
+    setStarted(true);
+
+    setHoles(
+      Array(9).fill(false)
+    );
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-semibold mb-3">Whack a Mole</h3>
-      <div className="grid grid-cols-3 gap-2">
-        {holes.map((v, i) => (
-          <button
+
+    <motion.div
+
+      initial={{
+        opacity: 0,
+        scale: 0.9,
+      }}
+
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+
+      transition={{
+        duration: 0.4,
+      }}
+
+      className="
+        relative
+        flex
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-2
+      "
+    >
+
+      {/* BACKGROUND GLOW */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          -z-10
+          rounded-full
+          bg-green-500/10
+          blur-3xl
+        "
+      />
+
+      {/* TOP */}
+
+      <div className="mb-5 text-center">
+
+        <h3
+          className="
+            text-2xl
+            font-black
+            text-green-400
+
+            sm:text-3xl
+          "
+        >
+          Whack A Mole
+        </h3>
+
+        {/* STATS */}
+
+        <div
+          className="
+            mt-3
+            flex
+            flex-wrap
+            items-center
+            justify-center
+            gap-3
+          "
+        >
+
+          {/* SCORE */}
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-green-400/10
+              bg-green-500/10
+              px-4
+              py-2
+              backdrop-blur-xl
+            "
+          >
+
+            <p
+              className="
+                text-xs
+                font-medium
+                text-green-300
+
+                sm:text-sm
+              "
+            >
+              Score: {score}
+            </p>
+
+          </div>
+
+          {/* TIME */}
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-yellow-400/10
+              bg-yellow-500/10
+              px-4
+              py-2
+              backdrop-blur-xl
+            "
+          >
+
+            <p
+              className="
+                text-xs
+                font-medium
+                text-yellow-300
+
+                sm:text-sm
+              "
+            >
+              Time: {timeLeft}s
+            </p>
+
+          </div>
+
+          {/* BEST */}
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-cyan-400/10
+              bg-cyan-500/10
+              px-4
+              py-2
+              backdrop-blur-xl
+            "
+          >
+
+            <p
+              className="
+                text-xs
+                font-medium
+                text-cyan-300
+
+                sm:text-sm
+              "
+            >
+              Best: {bestScore}
+            </p>
+
+          </div>
+
+        </div>
+      </div>
+
+      {/* BOARD */}
+
+      <div
+        className="
+          whack-board
+
+          grid
+          grid-cols-3
+          gap-3
+
+          rounded-[30px]
+
+          border
+          border-white/10
+
+          bg-white/[0.04]
+
+          p-4
+
+          backdrop-blur-2xl
+
+          shadow-[0_0_60px_rgba(34,197,94,0.16)]
+
+          w-full
+          max-w-[320px]
+
+          sm:max-w-[420px]
+        "
+      >
+
+        {holes.map((active, i) => (
+
+          <motion.button
+
             key={i}
+
+            whileHover={{
+              scale: 1.04,
+            }}
+
+            whileTap={{
+              scale: 0.92,
+            }}
+
             onClick={() => hit(i)}
-            className={`w-16 h-16 rounded-lg ${
-              v ? "bg-green-500" : "bg-gray-500"
-            }`}
-          />
+
+            className="
+              relative
+
+              aspect-square
+              w-full
+
+              overflow-hidden
+
+              rounded-2xl
+
+              border
+              border-white/10
+
+              bg-[#111827]
+            "
+          >
+
+            {/* HOLE */}
+
+            <div
+              className="
+                absolute
+                bottom-0
+                left-1/2
+
+                h-[40%]
+                w-[80%]
+
+                -translate-x-1/2
+
+                rounded-full
+
+                bg-black/60
+
+                blur-[2px]
+              "
+            />
+
+            {/* MOLE */}
+
+            {active && (
+
+              <motion.div
+
+                initial={{
+                  y: 40,
+                  scale: 0.7,
+                }}
+
+                animate={{
+                  y: 0,
+                  scale: 1,
+                }}
+
+                exit={{
+                  y: 40,
+                  opacity: 0,
+                }}
+
+                className={`
+                  mole-${i}
+
+                  absolute
+                  bottom-4
+                  left-1/2
+
+                  flex
+                  h-[60%]
+                  w-[60%]
+
+                  -translate-x-1/2
+
+                  items-center
+                  justify-center
+
+                  rounded-full
+
+                  bg-gradient-to-br
+                  from-green-400
+                  to-emerald-600
+
+                  text-3xl
+
+                  shadow-[0_0_30px_rgba(34,197,94,0.45)]
+                `}
+              >
+
+                🐹
+
+              </motion.div>
+            )}
+
+          </motion.button>
         ))}
       </div>
-      <p className="mt-3 text-sm">Score: {score}</p>
-    </div>
+
+      {/* GAME OVER */}
+
+      {gameOver && (
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            mt-5
+            rounded-2xl
+            border
+            border-red-400/20
+            bg-red-500/10
+            px-5
+            py-3
+            text-red-300
+            backdrop-blur-xl
+          "
+        >
+
+          💀 Time Up! Final Score: {score}
+
+        </motion.div>
+      )}
+
+      {/* START */}
+
+      <motion.button
+
+        whileHover={{
+          scale: 1.05,
+        }}
+
+        whileTap={{
+          scale: 0.95,
+        }}
+
+        onClick={startGame}
+
+        className="
+          mt-5
+          rounded-xl
+          bg-green-500
+          px-5
+          py-2
+          text-sm
+          font-semibold
+          text-white
+
+          shadow-[0_0_25px_rgba(34,197,94,0.35)]
+
+          sm:text-base
+        "
+      >
+
+        {started
+          ? "Playing..."
+          : "Start Game"}
+
+      </motion.button>
+
+    </motion.div>
   );
 }
 
@@ -1798,42 +2752,598 @@ function Game2048() {
 }
 /* ---------- 6) Mini Quiz ---------- */
 function MiniQuiz() {
-  const q = [
-    { q: "2 + 2 = ?", a: "4" },
-    { q: "Capital of India?", a: "Delhi" },
-  ];
-  const [i, setI] = useState(0);
-  const [ans, setAns] = useState("");
-  const [score, setScore] = useState(0);
 
-  const submit = () => {
-    if (ans.toLowerCase() === q[i].a.toLowerCase()) setScore(score + 1);
-    setAns("");
-    setI(i + 1);
+  /* ================= QUESTIONS ================= */
+
+  const questions = [
+
+    {
+      question:
+        "Which company created React.js?",
+      options: [
+        "Google",
+        "Facebook",
+        "Microsoft",
+        "Apple",
+      ],
+      answer: "Facebook",
+    },
+
+    {
+      question:
+        "What does CSS stand for?",
+      options: [
+        "Creative Style Sheets",
+        "Cascading Style Sheets",
+        "Computer Style Syntax",
+        "Colorful Style System",
+      ],
+      answer:
+        "Cascading Style Sheets",
+    },
+
+    {
+      question:
+        "Which hook is used for side effects in React?",
+      options: [
+        "useState",
+        "useMemo",
+        "useEffect",
+        "useRef",
+      ],
+      answer: "useEffect",
+    },
+
+    {
+      question:
+        "What does API stand for?",
+      options: [
+        "Application Programming Interface",
+        "Advanced Program Internet",
+        "Application Process Integration",
+        "Applied Program Interface",
+      ],
+      answer:
+        "Application Programming Interface",
+    },
+
+    {
+      question:
+        "Which language runs in the browser?",
+      options: [
+        "Python",
+        "C++",
+        "Java",
+        "JavaScript",
+      ],
+      answer: "JavaScript",
+    },
+  ];
+
+  /* ================= STATES ================= */
+
+  const [current, setCurrent] =
+    useState(0);
+
+  const [selected, setSelected] =
+    useState(null);
+
+  const [score, setScore] =
+    useState(0);
+
+  const [showResult, setShowResult] =
+    useState(false);
+
+  const [answered, setAnswered] =
+    useState(false);
+
+  /* ================= SUBMIT ================= */
+
+  const submitAnswer = () => {
+
+    if (!selected || answered)
+      return;
+
+    setAnswered(true);
+
+    const correct =
+      questions[current].answer;
+
+    if (selected === correct) {
+
+      setScore(
+        (prev) => prev + 1
+      );
+
+      gsap.fromTo(
+        ".quiz-card",
+        { scale: 1 },
+        {
+          scale: 1.02,
+          duration: 0.12,
+          repeat: 1,
+          yoyo: true,
+        }
+      );
+    }
+
+    setTimeout(() => {
+
+      if (
+        current + 1 <
+        questions.length
+      ) {
+
+        setCurrent(
+          (prev) => prev + 1
+        );
+
+        setSelected(null);
+
+        setAnswered(false);
+
+      } else {
+
+        setShowResult(true);
+      }
+
+    }, 900);
   };
 
+  /* ================= RESET ================= */
+
+  const resetQuiz = () => {
+
+    setCurrent(0);
+
+    setSelected(null);
+
+    setScore(0);
+
+    setAnswered(false);
+
+    setShowResult(false);
+  };
+
+  /* ================= RESULT PERCENT ================= */
+
+  const percent =
+    Math.round(
+      (score /
+        questions.length) *
+        100
+    );
+
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-semibold mb-3">Mini Quiz</h3>
-      {i < q.length ? (
-        <>
-          <p className="mb-2">{q[i].q}</p>
-          <input
-            className="p-1 text-black rounded mb-2"
-            value={ans}
-            onChange={(e) => setAns(e.target.value)}
-          />
-          <button
-            onClick={submit}
-            className="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+
+    <motion.div
+
+      initial={{
+        opacity: 0,
+        scale: 0.92,
+      }}
+
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+
+      transition={{
+        duration: 0.45,
+      }}
+
+      className="
+        relative
+        flex
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-2
+      "
+    >
+
+      {/* GLOW */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          -z-10
+          rounded-full
+          bg-blue-500/10
+          blur-3xl
+        "
+      />
+
+      {/* TOP */}
+
+      <div className="mb-5 text-center">
+
+        <h3
+          className="
+            text-2xl
+            font-black
+            text-blue-400
+
+            sm:text-3xl
+          "
+        >
+          Mini Quiz
+        </h3>
+
+        {!showResult && (
+
+          <div
+            className="
+              mt-3
+              rounded-2xl
+              border
+              border-blue-400/10
+              bg-blue-500/10
+              px-5
+              py-2
+              backdrop-blur-xl
+            "
           >
-            Submit
-          </button>
-        </>
+
+            <p
+              className="
+                text-sm
+                font-medium
+                text-blue-300
+              "
+            >
+              Question
+              {" "}
+              {current + 1}
+              /{questions.length}
+            </p>
+
+          </div>
+        )}
+
+      </div>
+
+      {/* QUIZ CARD */}
+
+      {!showResult ? (
+
+        <motion.div
+
+          key={current}
+
+          initial={{
+            opacity: 0,
+            y: 25,
+          }}
+
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+
+          transition={{
+            duration: 0.35,
+          }}
+
+          className="
+            quiz-card
+
+            w-full
+            max-w-[520px]
+
+            rounded-[30px]
+
+            border
+            border-white/10
+
+            bg-white/[0.04]
+
+            p-5
+
+            backdrop-blur-2xl
+
+            shadow-[0_0_60px_rgba(59,130,246,0.14)]
+          "
+        >
+
+          {/* QUESTION */}
+
+          <h4
+            className="
+              mb-5
+              text-lg
+              font-bold
+              text-white
+
+              sm:text-xl
+            "
+          >
+            {
+              questions[current]
+                .question
+            }
+          </h4>
+
+          {/* OPTIONS */}
+
+          <div
+            className="
+              flex
+              flex-col
+              gap-3
+            "
+          >
+
+            {questions[
+              current
+            ].options.map(
+              (option, i) => {
+
+                const correct =
+                  questions[current]
+                    .answer;
+
+                const isCorrect =
+                  option === correct;
+
+                const isSelected =
+                  selected === option;
+
+                return (
+
+                  <motion.button
+
+                    key={i}
+
+                    whileHover={{
+                      scale: 1.02,
+                    }}
+
+                    whileTap={{
+                      scale: 0.98,
+                    }}
+
+                    onClick={() =>
+                      !answered &&
+                      setSelected(option)
+                    }
+
+                    className="
+                      rounded-2xl
+                      border
+                      border-white/10
+
+                      px-4
+                      py-3
+
+                      text-left
+                      text-sm
+                      font-medium
+
+                      transition-all
+                      duration-300
+
+                      sm:text-base
+                    "
+
+                    style={{
+
+                      background:
+
+                        answered
+
+                          ? isCorrect
+
+                            ? "linear-gradient(135deg,#22c55e,#16a34a)"
+
+                            : isSelected
+
+                            ? "linear-gradient(135deg,#ef4444,#dc2626)"
+
+                            : "rgba(255,255,255,0.05)"
+
+                          : isSelected
+
+                          ? "linear-gradient(135deg,#3b82f6,#2563eb)"
+
+                          : "rgba(255,255,255,0.05)",
+
+                      color:
+                        "#fff",
+
+                      boxShadow:
+
+                        isSelected
+
+                          ? "0 0 25px rgba(59,130,246,0.25)"
+
+                          : "none",
+                    }}
+                  >
+
+                    {option}
+
+                  </motion.button>
+                );
+              }
+            )}
+
+          </div>
+
+          {/* BUTTON */}
+
+          <motion.button
+
+            whileHover={{
+              scale: 1.04,
+            }}
+
+            whileTap={{
+              scale: 0.95,
+            }}
+
+            onClick={submitAnswer}
+
+            className="
+              mt-5
+              w-full
+
+              rounded-xl
+
+              bg-blue-500
+
+              px-5
+              py-3
+
+              text-sm
+              font-semibold
+              text-white
+
+              shadow-[0_0_25px_rgba(59,130,246,0.35)]
+
+              sm:text-base
+            "
+          >
+
+            Submit Answer
+
+          </motion.button>
+
+        </motion.div>
+
       ) : (
-        <p>Score: {score}</p>
+
+        /* RESULT */
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.85,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            w-full
+            max-w-[420px]
+
+            rounded-[30px]
+
+            border
+            border-white/10
+
+            bg-white/[0.04]
+
+            p-6
+
+            text-center
+
+            backdrop-blur-2xl
+
+            shadow-[0_0_60px_rgba(59,130,246,0.14)]
+          "
+        >
+
+          <h4
+            className="
+              text-2xl
+              font-black
+              text-blue-400
+            "
+          >
+            Quiz Complete 🎉
+          </h4>
+
+          <p
+            className="
+              mt-4
+              text-lg
+              text-white
+            "
+          >
+            Score:
+            {" "}
+            {score}
+            /
+            {questions.length}
+          </p>
+
+          <div
+            className="
+              mt-5
+
+              rounded-2xl
+
+              border
+              border-green-400/10
+
+              bg-green-500/10
+
+              px-5
+              py-4
+            "
+          >
+
+            <p
+              className="
+                text-3xl
+                font-black
+                text-green-300
+              "
+            >
+              {percent}%
+            </p>
+
+          </div>
+
+          {/* RESET */}
+
+          <motion.button
+
+            whileHover={{
+              scale: 1.04,
+            }}
+
+            whileTap={{
+              scale: 0.95,
+            }}
+
+            onClick={resetQuiz}
+
+            className="
+              mt-5
+
+              rounded-xl
+
+              bg-blue-500
+
+              px-5
+              py-3
+
+              text-sm
+              font-semibold
+              text-white
+
+              shadow-[0_0_25px_rgba(59,130,246,0.35)]
+
+              sm:text-base
+            "
+          >
+
+            Play Again
+
+          </motion.button>
+
+        </motion.div>
       )}
-    </div>
+
+    </motion.div>
   );
 }
 
@@ -2404,111 +3914,1924 @@ function SnakeGame() {
 }
 /* ---------- 8) Pong ---------- */
 function PongGame() {
+
   const canvasRef = useRef(null);
+
+  const [score, setScore] =
+    useState(0);
+
+  const [bestScore, setBestScore] =
+    useState(0);
+
+  const [started, setStarted] =
+    useState(false);
+
+  const [gameOver, setGameOver] =
+    useState(false);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.width = 300;
-    canvas.height = 300;
-    let ball = { x: 150, y: 150, dx: 2, dy: 2 };
-    let paddle = 130;
 
-    const draw = () => {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, 300, 300);
-      ctx.fillStyle = "white";
-      ctx.fillRect(ball.x, ball.y, 10, 10);
-      ctx.fillRect(paddle, 280, 60, 10);
+    const canvas =
+      canvasRef.current;
+
+    if (!canvas) return;
+
+    const ctx =
+      canvas.getContext("2d");
+
+    /* ================= SIZE ================= */
+
+    const wrapper =
+      canvas.parentElement;
+
+    const width =
+      wrapper.clientWidth;
+
+    const height =
+      window.innerHeight * 0.72;
+
+    canvas.width = width;
+
+    canvas.height = height;
+
+    let animationFrame;
+
+    let running = true;
+
+    /* ================= STARS ================= */
+
+    const stars = Array.from(
+      { length: 100 },
+      () => ({
+        x:
+          Math.random() *
+          canvas.width,
+
+        y:
+          Math.random() *
+          canvas.height,
+
+        r:
+          Math.random() * 2,
+      })
+    );
+
+    /* ================= PADDLE ================= */
+
+    const paddle = {
+
+      width:
+        canvas.width * 0.18,
+
+      height: 18,
+
+      x:
+        canvas.width / 2 -
+        (canvas.width * 0.18) / 2,
+
+      y:
+        canvas.height - 45,
+
+      targetX:
+        canvas.width / 2 -
+        (canvas.width * 0.18) / 2,
     };
 
-    const move = () => {
-      ball.x += ball.dx;
-      ball.y += ball.dy;
-      if (ball.x <= 0 || ball.x >= 290) ball.dx *= -1;
-      if (ball.y <= 0) ball.dy *= -1;
-      if (ball.y >= 270 && ball.x > paddle && ball.x < paddle + 60)
-        ball.dy *= -1;
-      if (ball.y > 300) {
-        ball = { x: 150, y: 150, dx: 2, dy: 2 };
+    /* ================= BALLS ================= */
+
+    let balls = [
+
+      {
+        x:
+          canvas.width / 2,
+
+        y:
+          canvas.height / 2,
+
+        radius:
+          canvas.width * 0.012,
+
+        dx: 3,
+
+        dy: -3,
+
+        speed: 3,
+
+        fire: false,
+      },
+    ];
+
+    /* ================= BRICKS ================= */
+
+    const brickRows = 6;
+
+    const brickCols = 10;
+
+    const brickGap = 2;
+
+    const brickWidth =
+      (canvas.width -
+        brickGap *
+          (brickCols + 1)) /
+      brickCols;
+
+    const brickHeight = 30;
+
+    let bricks = [];
+
+    for (
+      let r = 0;
+      r < brickRows;
+      r++
+    ) {
+
+      for (
+        let c = 0;
+        c < brickCols;
+        c++
+      ) {
+
+        const doubleBrick =
+          Math.random() > 0.72;
+
+        bricks.push({
+
+          x:
+            c *
+              (brickWidth +
+                brickGap) +
+            brickGap,
+
+          y:
+            r *
+              (brickHeight +
+                brickGap) +
+            18,
+
+          width:
+            brickWidth,
+
+          height:
+            brickHeight,
+
+          destroyed:
+            false,
+
+          hits:
+            doubleBrick
+              ? 2
+              : 1,
+
+          double:
+            doubleBrick,
+
+          color:
+            doubleBrick
+              ? "#9333ea"
+              : `hsl(${
+                  c * 35
+                },90%,60%)`,
+        });
       }
-    };
+    }
 
-    const loop = setInterval(() => {
-      move();
-      draw();
-    }, 20);
+    /* ================= POWERS ================= */
 
-    const handleKey = (e) => {
-      if (e.key === "ArrowLeft" && paddle > 0) paddle -= 20;
-      if (e.key === "ArrowRight" && paddle < 240) paddle += 20;
-    };
-    document.addEventListener("keydown", handleKey);
+    let powers = [];
+
+    const powerTypes = [
+      "double",
+      "fire",
+      "bigBall",
+      "bigPaddle",
+    ];
+
+    setInterval(() => {
+
+      const type =
+        powerTypes[
+          Math.floor(
+            Math.random() *
+              powerTypes.length
+          )
+        ];
+
+      powers.push({
+
+        x:
+          Math.random() *
+          (canvas.width - 60),
+
+        y:
+          Math.random() *
+          (canvas.height *
+            0.35),
+
+        width: 46,
+
+        height: 46,
+
+        type,
+
+        glow:
+          Math.random() * 360,
+      });
+
+    }, 7000);
+
+    /* ================= PARTICLES ================= */
+
+    let particles = [];
+
+    function createParticles(
+      x,
+      y,
+      color
+    ) {
+
+      for (
+        let i = 0;
+        i < 24;
+        i++
+      ) {
+
+        particles.push({
+
+          x,
+          y,
+
+          dx:
+            (Math.random() - 0.5) * 10,
+
+          dy:
+            (Math.random() - 0.5) * 10,
+
+          radius:
+            Math.random() * 4 + 1,
+
+          alpha: 1,
+
+          color,
+        });
+      }
+    }
+
+    function drawParticles() {
+
+      particles.forEach(
+        (p, index) => {
+
+          p.x += p.dx;
+
+          p.y += p.dy;
+
+          p.alpha -= 0.02;
+
+          ctx.beginPath();
+
+          ctx.fillStyle =
+            `rgba(${p.color},${p.alpha})`;
+
+          ctx.arc(
+            p.x,
+            p.y,
+            p.radius,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.fill();
+
+          if (p.alpha <= 0) {
+
+            particles.splice(
+              index,
+              1
+            );
+          }
+        }
+      );
+    }
+
+    /* ================= BACKGROUND ================= */
+
+    function drawBackground() {
+
+      const bg =
+        ctx.createLinearGradient(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+      bg.addColorStop(
+        0,
+        "#020617"
+      );
+
+      bg.addColorStop(
+        1,
+        "#0f172a"
+      );
+
+      ctx.fillStyle = bg;
+
+      ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      stars.forEach((star) => {
+
+        ctx.fillStyle =
+          "rgba(255,255,255,0.08)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+          star.x,
+          star.y,
+          star.r,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fill();
+      });
+    }
+
+    /* ================= BRICKS ================= */
+
+    function drawBricks() {
+
+      bricks.forEach(
+        (brick) => {
+
+          if (
+            brick.destroyed
+          )
+            return;
+
+          ctx.shadowBlur =
+            brick.double
+              ? 35
+              : 18;
+
+          ctx.shadowColor =
+            brick.color;
+
+          const gradient =
+            ctx.createLinearGradient(
+              brick.x,
+              brick.y,
+              brick.x,
+              brick.y +
+                brick.height
+            );
+
+          if (
+            brick.double
+          ) {
+
+            gradient.addColorStop(
+              0,
+              "#d8b4fe"
+            );
+
+            gradient.addColorStop(
+              0.4,
+              "#a855f7"
+            );
+
+            gradient.addColorStop(
+              1,
+              "#581c87"
+            );
+
+          } else {
+
+            gradient.addColorStop(
+              0,
+              "#ffffff"
+            );
+
+            gradient.addColorStop(
+              0.15,
+              brick.color
+            );
+
+            gradient.addColorStop(
+              1,
+              "#111827"
+            );
+          }
+
+          ctx.fillStyle =
+            gradient;
+
+          ctx.beginPath();
+
+          ctx.roundRect(
+            brick.x,
+            brick.y,
+            brick.width,
+            brick.height,
+            8
+          );
+
+          ctx.fill();
+
+          /* shine */
+
+          ctx.fillStyle =
+            "rgba(255,255,255,0.28)";
+
+          ctx.beginPath();
+
+          ctx.roundRect(
+            brick.x + 2,
+            brick.y + 2,
+            brick.width - 4,
+            7,
+            5
+          );
+
+          ctx.fill();
+
+          if (
+            brick.double
+          ) {
+
+            ctx.fillStyle =
+              "#fff";
+
+            ctx.font =
+              "bold 15px Arial";
+
+            ctx.fillText(
+              "2X",
+              brick.x +
+                brick.width / 2 -
+                12,
+              brick.y + 20
+            );
+          }
+
+          ctx.shadowBlur = 0;
+        }
+      );
+    }
+
+    /* ================= BALLS ================= */
+
+    function drawBalls() {
+
+      balls.forEach((ball) => {
+
+        const glow =
+          ctx.createRadialGradient(
+            ball.x,
+            ball.y,
+            0,
+            ball.x,
+            ball.y,
+            ball.radius * 4
+          );
+
+        glow.addColorStop(
+          0,
+          "#ffffff"
+        );
+
+        glow.addColorStop(
+          1,
+          ball.fire
+            ? "#ff4500"
+            : "#06b6d4"
+        );
+
+        ctx.beginPath();
+
+        ctx.fillStyle = glow;
+
+        ctx.shadowBlur = 35;
+
+        ctx.shadowColor =
+          ball.fire
+            ? "#ff4500"
+            : "#06b6d4";
+
+        ctx.arc(
+          ball.x,
+          ball.y,
+          ball.radius,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+      });
+    }
+
+    /* ================= PADDLE ================= */
+
+    function drawPaddle() {
+
+      paddle.x +=
+        (paddle.targetX -
+          paddle.x) *
+        0.14;
+
+      const gradient =
+        ctx.createLinearGradient(
+          paddle.x,
+          paddle.y,
+          paddle.x +
+            paddle.width,
+          paddle.y
+        );
+
+      gradient.addColorStop(
+        0,
+        "#06b6d4"
+      );
+
+      gradient.addColorStop(
+        1,
+        "#8b5cf6"
+      );
+
+      ctx.fillStyle =
+        gradient;
+
+      ctx.shadowBlur = 30;
+
+      ctx.shadowColor =
+        "#06b6d4";
+
+      ctx.beginPath();
+
+      ctx.roundRect(
+        paddle.x,
+        paddle.y,
+        paddle.width,
+        paddle.height,
+        30
+      );
+
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+    }
+
+    /* ================= POWERS ================= */
+
+    function drawPowers() {
+
+      powers.forEach(
+        (power) => {
+
+          power.y += 2.2;
+
+          power.glow += 4;
+
+          ctx.save();
+
+          ctx.shadowBlur = 30;
+
+          ctx.shadowColor =
+            `hsl(${power.glow},100%,70%)`;
+
+          const gradient =
+            ctx.createLinearGradient(
+              power.x,
+              power.y,
+              power.x,
+              power.y +
+                power.height
+            );
+
+          gradient.addColorStop(
+            0,
+            "#ffffff"
+          );
+
+          gradient.addColorStop(
+            1,
+            "#111827"
+          );
+
+          ctx.fillStyle =
+            gradient;
+
+          ctx.beginPath();
+
+          ctx.roundRect(
+            power.x,
+            power.y,
+            power.width,
+            power.height,
+            14
+          );
+
+          ctx.fill();
+
+          ctx.fillStyle =
+            "#000";
+
+          ctx.font =
+            "bold 22px Arial";
+
+          ctx.fillText(
+
+            power.type ===
+              "double"
+              ? "2X"
+
+              : power.type ===
+                "fire"
+              ? "🔥"
+
+              : power.type ===
+                "bigBall"
+              ? "⚽"
+
+              : "⬅",
+
+            power.x + 8,
+            power.y + 31
+          );
+
+          ctx.restore();
+
+          /* collision */
+
+          if (
+
+            power.y +
+              power.height >=
+              paddle.y &&
+
+            power.x <=
+              paddle.x +
+                paddle.width &&
+
+            power.x +
+              power.width >=
+              paddle.x
+
+          ) {
+
+            applyPower(
+              power.type
+            );
+
+            powers =
+              powers.filter(
+                (p) =>
+                  p !== power
+              );
+          }
+        }
+      );
+    }
+
+    /* ================= APPLY POWER ================= */
+
+    function applyPower(
+      type
+    ) {
+
+      if (
+        type === "double"
+      ) {
+
+        const extra =
+          balls.map(
+            (b) => ({
+              ...b,
+              dx: -b.dx,
+            })
+          );
+
+        balls = [
+          ...balls,
+          ...extra,
+        ];
+      }
+
+      if (
+        type === "fire"
+      ) {
+
+        balls.forEach(
+          (b) =>
+            (b.fire = true)
+        );
+
+        setTimeout(() => {
+
+          balls.forEach(
+            (b) =>
+              (b.fire = false)
+          );
+
+        }, 10000);
+      }
+
+      if (
+        type ===
+        "bigBall"
+      ) {
+
+        balls.forEach(
+          (b) =>
+            (b.radius += 8)
+        );
+      }
+
+      if (
+        type ===
+        "bigPaddle"
+      ) {
+
+        paddle.width += 90;
+      }
+    }
+
+    /* ================= UPDATE ================= */
+
+    function update() {
+
+      if (
+        !running ||
+        !started
+      )
+        return;
+
+      balls.forEach((ball) => {
+
+        ball.x += ball.dx;
+
+        ball.y += ball.dy;
+
+        /* walls */
+
+        if (
+
+          ball.x <=
+            ball.radius ||
+
+          ball.x >=
+            canvas.width -
+              ball.radius
+
+        ) {
+
+          ball.dx *= -1;
+        }
+
+        if (
+          ball.y <=
+          ball.radius
+        ) {
+
+          ball.dy *= -1;
+        }
+
+        /* paddle */
+
+        if (
+
+          ball.y +
+            ball.radius >=
+            paddle.y &&
+
+          ball.x >=
+            paddle.x &&
+
+          ball.x <=
+            paddle.x +
+              paddle.width
+
+        ) {
+
+          const collidePoint =
+            ball.x -
+            (paddle.x +
+              paddle.width / 2);
+
+          const normalized =
+            collidePoint /
+            (paddle.width / 2);
+
+          const angle =
+            normalized *
+            (Math.PI / 3);
+
+          ball.speed += 0.08;
+
+          ball.dx =
+            ball.speed *
+            Math.sin(angle);
+
+          ball.dy =
+            -ball.speed *
+            Math.cos(angle);
+        }
+
+        /* BRICK COLLISION */
+
+        bricks.forEach(
+          (brick) => {
+
+            if (
+              brick.destroyed
+            )
+              return;
+
+            if (
+
+              ball.x >
+                brick.x &&
+
+              ball.x <
+                brick.x +
+                  brick.width &&
+
+              ball.y -
+                ball.radius <
+                brick.y +
+                  brick.height &&
+
+              ball.y +
+                ball.radius >
+                brick.y
+
+            ) {
+
+              brick.hits--;
+
+              if (
+                brick.hits <= 0
+              ) {
+
+                brick.destroyed =
+                  true;
+
+                setScore(
+                  (prev) =>
+                    prev + 20
+                );
+
+                createParticles(
+                  brick.x +
+                    brick.width /
+                      2,
+
+                  brick.y +
+                    brick.height /
+                      2,
+
+                  "255,255,255"
+                );
+
+              } else {
+
+                brick.color =
+                  "#f472b6";
+
+                createParticles(
+                  brick.x +
+                    brick.width /
+                      2,
+
+                  brick.y +
+                    brick.height /
+                      2,
+
+                  "168,85,247"
+                );
+              }
+
+              if (
+                !ball.fire
+              ) {
+
+                ball.dy *= -1;
+              }
+            }
+          }
+        );
+
+        /* GAME OVER */
+
+        if (
+          ball.y >
+          canvas.height + 50
+        ) {
+
+          setGameOver(true);
+
+          setStarted(false);
+
+          setBestScore(
+            (prev) =>
+              Math.max(
+                prev,
+                score
+              )
+          );
+
+          running = false;
+        }
+      });
+    }
+
+    /* ================= RENDER ================= */
+
+    function render() {
+
+      drawBackground();
+
+      drawParticles();
+
+      drawBricks();
+
+      drawBalls();
+
+      drawPaddle();
+
+      drawPowers();
+    }
+
+    /* ================= LOOP ================= */
+
+    function loop() {
+
+      update();
+
+      render();
+
+      animationFrame =
+        requestAnimationFrame(
+          loop
+        );
+    }
+
+    loop();
+
+    /* ================= CONTROLS ================= */
+
+    const handleMouseMove =
+      (e) => {
+
+        const rect =
+          canvas.getBoundingClientRect();
+
+        paddle.targetX =
+          e.clientX -
+          rect.left -
+          paddle.width / 2;
+
+        paddle.targetX =
+          Math.max(
+            0,
+            Math.min(
+              paddle.targetX,
+              canvas.width -
+                paddle.width
+            )
+          );
+      };
+
+    const handleTouchMove =
+      (e) => {
+
+        const rect =
+          canvas.getBoundingClientRect();
+
+        const touch =
+          e.touches[0];
+
+        paddle.targetX =
+          touch.clientX -
+          rect.left -
+          paddle.width / 2;
+
+        paddle.targetX =
+          Math.max(
+            0,
+            Math.min(
+              paddle.targetX,
+              canvas.width -
+                paddle.width
+            )
+          );
+      };
+
+    canvas.addEventListener(
+      "mousemove",
+      handleMouseMove
+    );
+
+    canvas.addEventListener(
+      "touchmove",
+      handleTouchMove
+    );
 
     return () => {
-      clearInterval(loop);
-      document.removeEventListener("keydown", handleKey);
+
+      running = false;
+
+      cancelAnimationFrame(
+        animationFrame
+      );
+
+      canvas.removeEventListener(
+        "mousemove",
+        handleMouseMove
+      );
+
+      canvas.removeEventListener(
+        "touchmove",
+        handleTouchMove
+      );
     };
-  }, []);
+
+  }, [started]);
+
+  /* ================= START ================= */
+
+  const startGame = () => {
+
+    setScore(0);
+
+    setGameOver(false);
+
+    setStarted(true);
+  };
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-semibold mb-3">Pong</h3>
-      <canvas ref={canvasRef} className="border border-gray-600 rounded-lg" />
-    </div>
+
+    <motion.div
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      className="
+        flex
+        w-full
+        flex-col
+        items-center
+      "
+    >
+
+      <div className="mb-5 text-center">
+
+        <h3
+          className="
+            text-3xl
+            font-black
+            text-cyan-400
+
+            sm:text-5xl
+          "
+        >
+          Brick Breaker Arena
+        </h3>
+
+        <div
+          className="
+            mt-4
+            flex
+            flex-wrap
+            items-center
+            justify-center
+            gap-3
+          "
+        >
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-cyan-400/10
+              bg-cyan-500/10
+              px-5
+              py-2
+            "
+          >
+            <p className="text-cyan-300">
+              Score: {score}
+            </p>
+          </div>
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-purple-400/10
+              bg-purple-500/10
+              px-5
+              py-2
+            "
+          >
+            <p className="text-purple-300">
+              Best: {bestScore}
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      {/* GAME */}
+
+      <div
+        className="
+          w-full
+          flex-1
+          rounded-[35px]
+          border
+          border-white/10
+          bg-black/40
+          p-2
+          shadow-[0_0_100px_rgba(6,182,212,0.16)]
+        "
+      >
+
+        <canvas
+
+          ref={canvasRef}
+
+          className="
+            h-full
+            w-full
+            rounded-[28px]
+            bg-black
+          "
+        />
+
+      </div>
+
+      <p
+        className="
+          mt-4
+          text-center
+          text-xs
+          text-zinc-400
+
+          sm:text-sm
+        "
+      >
+        Catch powers • break bricks • survive
+      </p>
+
+      {gameOver && (
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            mt-5
+            rounded-2xl
+            border
+            border-red-400/20
+            bg-red-500/10
+            px-5
+            py-3
+            text-red-300
+          "
+        >
+
+          💀 Game Over
+
+        </motion.div>
+      )}
+
+      <motion.button
+
+        whileHover={{
+          scale: 1.05,
+        }}
+
+        whileTap={{
+          scale: 0.95,
+        }}
+
+        onClick={startGame}
+
+        className="
+          mt-5
+          rounded-xl
+          bg-cyan-500
+          px-6
+          py-3
+          font-semibold
+          text-white
+
+          shadow-[0_0_25px_rgba(6,182,212,0.35)]
+        "
+      >
+
+        {started
+          ? "Playing..."
+          : "Start Game"}
+
+      </motion.button>
+
+    </motion.div>
   );
 }
 
 /* ---------- 9) Mini Minesweeper ---------- */
 function MiniMinesweeper() {
-  const size = 5;
-  const mines = 3;
-  const [grid, setGrid] = useState([]);
 
-  useEffect(() => {
-    const g = Array(size)
-      .fill(0)
-      .map(() => Array(size).fill(0));
-    let m = mines;
-    while (m) {
-      const x = Math.floor(Math.random() * size);
-      const y = Math.floor(Math.random() * size);
-      if (g[x][y] === 0) {
-        g[x][y] = "💣";
-        m--;
+  /* ================= CONFIG ================= */
+
+  const size = 5;
+
+  const mineCount = 5;
+
+  /* ================= CREATE BOARD ================= */
+
+  const createBoard = () => {
+
+    const board =
+      Array(size)
+        .fill()
+        .map(() =>
+          Array(size)
+            .fill()
+            .map(() => ({
+              mine: false,
+              revealed: false,
+              flagged: false,
+              count: 0,
+            }))
+        );
+
+    /* mines */
+
+    let placed = 0;
+
+    while (
+      placed < mineCount
+    ) {
+
+      const x =
+        Math.floor(
+          Math.random() * size
+        );
+
+      const y =
+        Math.floor(
+          Math.random() * size
+        );
+
+      if (!board[x][y].mine) {
+
+        board[x][y].mine = true;
+
+        placed++;
       }
     }
-    setGrid(g);
-  }, []);
 
-  const [revealed, setRevealed] = useState(
-    Array(size)
-      .fill(0)
-      .map(() => Array(size).fill(false)),
-  );
+    /* numbers */
+
+    for (
+      let x = 0;
+      x < size;
+      x++
+    ) {
+
+      for (
+        let y = 0;
+        y < size;
+        y++
+      ) {
+
+        if (board[x][y].mine)
+          continue;
+
+        let count = 0;
+
+        for (
+          let dx = -1;
+          dx <= 1;
+          dx++
+        ) {
+
+          for (
+            let dy = -1;
+            dy <= 1;
+            dy++
+          ) {
+
+            const nx = x + dx;
+
+            const ny = y + dy;
+
+            if (
+              nx >= 0 &&
+              ny >= 0 &&
+              nx < size &&
+              ny < size &&
+              board[nx][ny].mine
+            ) {
+              count++;
+            }
+          }
+        }
+
+        board[x][y].count =
+          count;
+      }
+    }
+
+    return board;
+  };
+
+  /* ================= STATES ================= */
+
+  const [board, setBoard] =
+    useState(createBoard);
+
+  const [gameOver, setGameOver] =
+    useState(false);
+
+  const [won, setWon] =
+    useState(false);
+
+  const [score, setScore] =
+    useState(0);
+
+  /* ================= REVEAL ================= */
 
   const reveal = (x, y) => {
-    const r = revealed.map((row) => [...row]);
-    r[x][y] = true;
-    setRevealed(r);
+
+    if (
+      gameOver ||
+      won
+    ) return;
+
+    const updated =
+      [...board];
+
+    const cell =
+      updated[x][y];
+
+    if (
+      cell.revealed ||
+      cell.flagged
+    ) return;
+
+    cell.revealed = true;
+
+    /* mine */
+
+    if (cell.mine) {
+
+      setGameOver(true);
+
+      /* reveal all */
+
+      updated.forEach(
+        (row) =>
+          row.forEach(
+            (c) =>
+              (c.revealed = true)
+          )
+      );
+
+      gsap.fromTo(
+        ".mine-board",
+        { x: -8 },
+        {
+          x: 8,
+          duration: 0.08,
+          repeat: 5,
+          yoyo: true,
+        }
+      );
+
+    } else {
+
+      setScore(
+        (prev) => prev + 10
+      );
+
+      /* empty flood */
+
+      if (cell.count === 0) {
+
+        floodReveal(
+          updated,
+          x,
+          y
+        );
+      }
+
+      gsap.fromTo(
+        ".mine-board",
+        { scale: 1 },
+        {
+          scale: 1.01,
+          duration: 0.08,
+          repeat: 1,
+          yoyo: true,
+        }
+      );
+    }
+
+    setBoard([...updated]);
+
+    /* win */
+
+    const safeCells =
+      updated.flat().filter(
+        (c) =>
+          !c.mine &&
+          c.revealed
+      ).length;
+
+    if (
+      safeCells ===
+      size * size - mineCount
+    ) {
+
+      setWon(true);
+    }
+  };
+
+  /* ================= FLOOD ================= */
+
+  const floodReveal = (
+    board,
+    x,
+    y
+  ) => {
+
+    for (
+      let dx = -1;
+      dx <= 1;
+      dx++
+    ) {
+
+      for (
+        let dy = -1;
+        dy <= 1;
+        dy++
+      ) {
+
+        const nx = x + dx;
+
+        const ny = y + dy;
+
+        if (
+          nx >= 0 &&
+          ny >= 0 &&
+          nx < size &&
+          ny < size
+        ) {
+
+          const cell =
+            board[nx][ny];
+
+          if (
+            !cell.revealed &&
+            !cell.mine
+          ) {
+
+            cell.revealed = true;
+
+            if (
+              cell.count === 0
+            ) {
+
+              floodReveal(
+                board,
+                nx,
+                ny
+              );
+            }
+          }
+        }
+      }
+    }
+  };
+
+  /* ================= FLAG ================= */
+
+  const toggleFlag = (
+    e,
+    x,
+    y
+  ) => {
+
+    e.preventDefault();
+
+    if (
+      gameOver ||
+      won
+    ) return;
+
+    const updated =
+      [...board];
+
+    const cell =
+      updated[x][y];
+
+    if (!cell.revealed) {
+
+      cell.flagged =
+        !cell.flagged;
+
+      setBoard([...updated]);
+    }
+  };
+
+  /* ================= RESET ================= */
+
+  const reset = () => {
+
+    setBoard(createBoard());
+
+    setGameOver(false);
+
+    setWon(false);
+
+    setScore(0);
+  };
+
+  /* ================= COLORS ================= */
+
+  const numberColors = {
+
+    1: "#3b82f6",
+    2: "#22c55e",
+    3: "#ef4444",
+    4: "#8b5cf6",
+    5: "#f97316",
+    6: "#06b6d4",
+    7: "#ec4899",
+    8: "#eab308",
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-semibold mb-3">Mini Minesweeper</h3>
-      <div className="grid grid-cols-5 gap-1">
-        {grid.map((row, i) =>
-          row.map((v, j) => (
-            <button
-              key={i + "-" + j}
-              onClick={() => reveal(i, j)}
-              className="w-12 h-12 rounded bg-gray-600 text-white"
-            >
-              {revealed[i][j] ? v : "?"}
-            </button>
-          )),
+
+    <motion.div
+
+      initial={{
+        opacity: 0,
+        scale: 0.92,
+      }}
+
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+
+      transition={{
+        duration: 0.45,
+      }}
+
+      className="
+        relative
+        flex
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-2
+      "
+    >
+
+      {/* GLOW */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          -z-10
+          rounded-full
+          bg-red-500/10
+          blur-3xl
+        "
+      />
+
+      {/* TOP */}
+
+      <div className="mb-5 text-center">
+
+        <h3
+          className="
+            text-2xl
+            font-black
+            text-red-400
+
+            sm:text-3xl
+          "
+        >
+          Mini Minesweeper
+        </h3>
+
+        {/* SCORE */}
+
+        <div
+          className="
+            mt-3
+            rounded-2xl
+            border
+            border-red-400/10
+            bg-red-500/10
+            px-5
+            py-2
+            backdrop-blur-xl
+          "
+        >
+
+          <p
+            className="
+              text-sm
+              font-medium
+              text-red-300
+            "
+          >
+            Score: {score}
+          </p>
+
+        </div>
+      </div>
+
+      {/* BOARD */}
+
+      <div
+        className="
+          mine-board
+
+          grid
+          grid-cols-5
+          gap-2
+
+          rounded-[28px]
+
+          border
+          border-white/10
+
+          bg-white/[0.04]
+
+          p-4
+
+          backdrop-blur-2xl
+
+          shadow-[0_0_60px_rgba(239,68,68,0.16)]
+
+          w-full
+          max-w-[340px]
+
+          sm:max-w-[430px]
+        "
+      >
+
+        {board.map(
+          (row, i) =>
+            row.map(
+              (cell, j) => {
+
+                return (
+
+                  <motion.button
+
+                    key={`${i}-${j}`}
+
+                    whileHover={{
+                      scale: 1.04,
+                    }}
+
+                    whileTap={{
+                      scale: 0.94,
+                    }}
+
+                    onClick={() =>
+                      reveal(i, j)
+                    }
+
+                    onContextMenu={(
+                      e
+                    ) =>
+                      toggleFlag(
+                        e,
+                        i,
+                        j
+                      )
+                    }
+
+                    className="
+                      aspect-square
+                      w-full
+
+                      rounded-xl
+
+                      border
+                      border-white/10
+
+                      text-sm
+                      font-black
+
+                      sm:text-lg
+                    "
+
+                    style={{
+
+                      background:
+
+                        cell.revealed
+
+                          ? cell.mine
+
+                            ? "linear-gradient(135deg,#ef4444,#dc2626)"
+
+                            : "rgba(255,255,255,0.08)"
+
+                          : "linear-gradient(135deg,#1e293b,#0f172a)",
+
+                      color:
+                        numberColors[
+                          cell.count
+                        ] || "#fff",
+
+                      boxShadow:
+
+                        cell.mine &&
+                        cell.revealed
+
+                          ? "0 0 25px rgba(239,68,68,0.45)"
+
+                          : "none",
+                    }}
+                  >
+
+                    {cell.revealed ? (
+
+                      cell.mine
+
+                        ? "💣"
+
+                        : cell.count ||
+                          ""
+
+                    ) : cell.flagged ? (
+
+                      "🚩"
+
+                    ) : (
+
+                      "?"
+                    )}
+
+                  </motion.button>
+                );
+              }
+            )
         )}
       </div>
-    </div>
+
+      {/* GAME OVER */}
+
+      {gameOver && (
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            mt-5
+            rounded-2xl
+            border
+            border-red-400/20
+            bg-red-500/10
+            px-5
+            py-3
+            text-red-300
+            backdrop-blur-xl
+          "
+        >
+
+          💀 Boom! You hit a mine
+
+        </motion.div>
+      )}
+
+      {/* WIN */}
+
+      {won && (
+
+        <motion.div
+
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+
+          className="
+            mt-5
+            rounded-2xl
+            border
+            border-green-400/20
+            bg-green-500/10
+            px-5
+            py-3
+            text-green-300
+            backdrop-blur-xl
+          "
+        >
+
+          🎉 You Cleared The Minefield
+
+        </motion.div>
+      )}
+
+      {/* BUTTON */}
+
+      <motion.button
+
+        whileHover={{
+          scale: 1.05,
+        }}
+
+        whileTap={{
+          scale: 0.95,
+        }}
+
+        onClick={reset}
+
+        className="
+          mt-5
+          rounded-xl
+          bg-red-500
+          px-5
+          py-2
+          text-sm
+          font-semibold
+          text-white
+
+          shadow-[0_0_25px_rgba(239,68,68,0.35)]
+
+          sm:text-base
+        "
+      >
+
+        Restart
+
+      </motion.button>
+
+      {/* INFO */}
+
+      <p
+        className="
+          mt-4
+          text-center
+          text-xs
+          text-zinc-400
+
+          sm:text-sm
+        "
+      >
+        Right click / long press
+        to place 🚩 flags
+      </p>
+
+    </motion.div>
   );
 }
 
