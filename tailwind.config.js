@@ -1,34 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-   content: [
+  content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
- darkMode: 'class',
+
+  darkMode: "class",
+
   theme: {
+    container: {
+      center: true,
+      padding: "1rem",
+    },
+
     extend: {
       colors: {
-        primary: "#0A192F",
-        secondary: "#64FFDA",
-        textPrimary: "#CCD6F6",
-        textSecondary: "#8892B0",
+        primary: "#050816",
+        secondary: "#8B5CF6",
+        accent: "#22D3EE",
       },
-      animation: {
-        'fade-in': 'fadeIn 1s ease-in-out',
-        'slide-up': 'slideUp 0.5s ease-out',
-        'bounce-slow': 'bounce 3s infinite',
+
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(100px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
+
+      boxShadow: {
+        glow: "0 0 40px rgba(139,92,246,0.25)",
+      },
+
+      backdropBlur: {
+        xs: "2px",
+      },
+
+      transitionTimingFunction: {
+        smooth: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
     },
   },
+
   plugins: [],
-}
+};

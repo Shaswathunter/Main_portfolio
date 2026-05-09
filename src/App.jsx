@@ -1,77 +1,123 @@
+
 import "./App.css";
-import React, { useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import Navbar from "./Components/Navbar";
 import Hero from "./Components/Hero";
-import Skills from "./Components/Skills";
-import Projects from "./Components/Projects";
-import About from "./Components/About";
-import NeonGlowBackground from "./Components/NeonBackground";
-import ContactForm from "./Components/ContactForm.jsx";
+import BackToTop from "./Components/backToTop";
 import { Toaster } from "react-hot-toast";
-import BackToTop from "./Components/backToTop.jsx";
-import ChatBot from "./Components/ChatBot.jsx";
-import GamesPreview from "./Components/GamesPreview.jsx";
 import { AnimatePresence, motion } from "framer-motion";
-import HiddenRunner from "./Components/HiddenRunner";
+import gsap from "gsap";
+
+const About = lazy(() => import("./Components/About"));
+const Skills = lazy(() => import("./Components/Skills"));
+const Projects = lazy(() => import("./Components/Projects"));
+const ContactForm = lazy(() => import("./Components/ContactForm"));
+const ChatBot = lazy(() => import("./Components/ChatBot"));
+const GamesPreview = lazy(() => import("./Components/GamesPreview"));
 
 function App() {
   const [showGames, setShowGames] = useState(false);
 
-  const handleGamesClick = () => {
-    setShowGames(true);
-  };
+  useEffect(() => {
+    gsap.config({
+      nullTargetWarn: false,
+    });
+  }, []);
 
-  const handleCloseGames = () => {
-    setShowGames(false);
-  };
+  useEffect(() => {
+if (showGames) {
+  document.body.classList.add("overflow-hidden");
+} else {
+  document.body.classList.remove("overflow-hidden");
+}
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showGames]);
 
   return (
-    <NeonGlowBackground>
-      {/* Stickman Background Always Visible */}
-      <HiddenRunner />
+    <div className="min-h-screen bg-[#050816] text-white overflow-hidden">
+      {!showGames && (
+  <Navbar onGamesClick={() => setShowGames(true)} />
+)}
 
-      <Navbar onGamesClick={handleGamesClick} />
+      <main>
+        <section id="home">
+          <Hero />
+        </section>
 
-      {/* Normal sections */}
-      <div id="home"><Hero /></div>
-      <div id="about"><About /></div>
-      <div id="skills"><Skills /></div>
-      <div id="projects"><Projects /></div>
-      <div id="contact"><ContactForm /></div>
-
-      <ChatBot />
-      <BackToTop />
-      <Toaster position="top-center" />
-
-      {/* Overlay Animation for GamesPreview */}
-      <AnimatePresence>
-        {showGames && (
-          <motion.div
-            key="games-overlay"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto py-10 px-4 sm:px-6"
-          >
-            <div className="relative w-full max-w-7xl mx-auto">
-              {/* Close Button */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleCloseGames}
-                className="fixed top-4 right-4 sm:absolute sm:top-5 sm:right-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-xl font-semibold shadow-lg hover:shadow-pink-500/40 transition-all z-50"
-              >
-                ✖ Close
-              </motion.button>
-
-              {/* Games Preview Component */}
-              <GamesPreview />
+        <Suspense
+          fallback={
+            <div className="flex justify-center py-20 text-zinc-400">
+              Loading...
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </NeonGlowBackground>
+          }
+        >
+          <section id="about">
+            <About />
+          </section>
+
+          <section id="skills">
+            <Skills />
+          </section>
+
+          <section id="projects">
+            <Projects />
+          </section>
+
+          <section id="contact">
+            <ContactForm />
+          </section>
+
+          <ChatBot />
+        </Suspense>
+      </main>
+
+      <BackToTop />
+      <Toaster position="top-right" />
+
+     <AnimatePresence>
+  {showGames && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[100] bg-[#050816]/95 backdrop-blur-xl"
+    >
+
+      {/* Main Wrapper */}
+      <div className="relative flex h-screen flex-col overflow-hidden">
+
+   
+          
+
+        {/* Scroll Area */}
+<div
+className="
+  custom-scroll
+  h-full
+  overflow-y-auto
+  overflow-x-hidden
+  pb-6
+  touch-pan-y
+"
+>          <Suspense
+            fallback={
+              <div className="flex h-full items-center justify-center text-zinc-400">
+                Loading Games...
+              </div>
+            }
+          >
+            <GamesPreview onClose={() => setShowGames(false)} />
+          </Suspense>
+
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+    </div>
   );
 }
 

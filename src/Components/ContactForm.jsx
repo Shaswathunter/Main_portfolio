@@ -119,14 +119,28 @@ const ContactForm = () => {
         </motion.h2>
 
         <div className="space-y-4 text-lg">
+         <motion.p
+  whileHover={{ scale: 1.05, color: '#64FFDA' }}
+  transition={{ type: 'spring', stiffness: 300 }}
+  className="hover:underline cursor-pointer"
+>
+  📧 Email:{" "}
+  <a 
+    href="mailto:Shaswat2016@gmail.com" 
+    className="text-cyan-400 relative z-10"
+  >
+    Shaswat2016@gmail.com 
+  </a>
+</motion.p>
           <motion.p
             whileHover={{ scale: 1.05, color: '#64FFDA' }}
             transition={{ type: 'spring', stiffness: 300 }}
             className="hover:underline cursor-pointer"
           >
-            📧 Email:{" "}
-            <a href="mailto:Shaswat2016@gmail.com" className="text-black">
-              Shaswat2016@gmail.com
+            � Phone:{" "}
+            <a href="tel:8279476617" className="text-cyan-400">
+              8279476617
+              
             </a>
           </motion.p>
 

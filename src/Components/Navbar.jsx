@@ -1,111 +1,229 @@
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
-import React, { useState, useEffect } from "react";
 
 const Navbar = ({ onGamesClick }) => {
-  const [nav, setNav] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const links = [
-    { id: "home", link: "home" },
-    { id: "games", link: "games" },
-    { id: "about", link: "about" },
-    { id: "skills", link: "skills" },
-    { id: "projects", link: "projects" },
-    { id: "contact", link: "contact" },
-  ];
+  // Navbar scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
 
-  const handleClick = (link) => {
-    // Close mobile menu first
-    setNav(false);
+    window.addEventListener("scroll", handleScroll);
 
-    if (link === "games") {
-      onGamesClick?.();
-      return;
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Lock body scroll when mobile menu open
+  useEffect(() => {
+    if (open) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
     }
 
-    // Wait for menu exit animation (if mobile) then scroll
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [open]);
+
+  // Navigation Links
+  const links = [
+    "home",
+    "about",
+    "skills",
+    "projects",
+    "contact",
+  ];
+
+  // Smooth Scroll
+  const handleScrollTo = (id) => {
+    setOpen(false);
+
     setTimeout(() => {
-      const section = document.getElementById(link);
-      if (section) section.scrollIntoView({ behavior: "smooth" });
-    }, 300); // match mobile menu exit duration
+      const section = document.getElementById(id);
+
+      if (section) {
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 150);
   };
 
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    document.body.style.overflow = nav ? "hidden" : "auto";
-  }, [nav]);
-
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      whileInView={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="flex justify-between items-center w-full h-20 px-4 text-textPrimary bg-transparent fixed top-0 left-0 z-50"
-    >
-      {/* Logo */}
-      <div>
-        <h1 className="text-5xl font-signature ml-2 text-secondary">SG.</h1>
-      </div>
+    <>
+      {/* NAVBAR */}
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
+          scrolled
+            ? "border-b border-white/10 bg-black/50 backdrop-blur-xl"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-      {/* Desktop Menu */}
-      <ul className="hidden md:flex">
-        {links.map(({ id, link }) => (
-          <li
-            key={id}
-            className="px-4 cursor-pointer capitalize font-medium text-textSecondary hover:text-secondary duration-200"
+          {/* Logo */}
+          <motion.h1
+            whileHover={{ scale: 1.04 }}
+            className="cursor-pointer text-2xl font-black tracking-tight text-white"
           >
-            <button onClick={() => handleClick(link)}>
-              {link === "games" ? "Play More Games" : link.charAt(0).toUpperCase() + link.slice(1)}
-            </button>
-          </li>
-        ))}
-      </ul>
+            SG.
+          </motion.h1>
 
-      {/* Hamburger Icon */}
-      {!nav && (
-        <div
-          onClick={() => setNav(true)}
-          className="cursor-pointer pr-4 text-textSecondary md:hidden z-50"
-        >
-          <FaBars size={30} />
-        </div>
-      )}
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-8 md:flex">
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {nav && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 w-full h-full bg-primary flex flex-col items-center z-50 pt-10"
-          >
-            {/* Close Button */}
-            <div
-              onClick={() => setNav(false)}
-              className="absolute top-6 right-6 cursor-pointer text-textSecondary z-50"
+            {links.map((link) => (
+              <button
+                key={link}
+                onClick={() => handleScrollTo(link)}
+                className="
+                  text-sm
+                  font-medium
+                  capitalize
+                  text-zinc-400
+                  transition-all
+                  duration-300
+                  hover:text-white
+                "
+              >
+                {link}
+              </button>
+            ))}
+
+            {/* Games Button */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onGamesClick}
+              className="
+                rounded-full
+                border
+                border-cyan-400/20
+                bg-cyan-400/10
+                px-5
+                py-2
+                text-sm
+                font-medium
+                text-cyan-300
+                transition-all
+                duration-300
+                hover:bg-cyan-400/20
+              "
             >
-              <FaTimes size={30} />
+              🎮 Games
+            </motion.button>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setOpen(true)}
+            className="text-white md:hidden"
+          >
+            <FaBars size={22} />
+          </motion.button>
+        </div>
+      </motion.header>
+
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ duration: 0.3 }}
+            className="
+              fixed
+              inset-0
+              z-[100]
+              bg-[#050816]
+              px-6
+              py-8
+              md:hidden
+            "
+          >
+
+            {/* Top */}
+            <div className="flex items-center justify-between">
+
+              <h2 className="text-xl font-bold text-white">
+                Menu
+              </h2>
+
+              <button onClick={() => setOpen(false)}>
+                <FaTimes
+                  size={24}
+                  className="text-white"
+                />
+              </button>
             </div>
 
-            {/* Mobile links */}
-            <ul className="flex flex-col justify-center items-center space-y-8 w-full mt-20">
-              {links.map(({ id, link }) => (
-                <li key={id} className="list-none">
-                  <button
-                    onClick={() => handleClick(link)}
-                    className="hover:text-secondary transition-all duration-200 cursor-pointer px-4 py-2 text-center"
-                  >
-                    {link === "games" ? "Play More Games" : link.charAt(0).toUpperCase() + link.slice(1)}
-                  </button>
-                </li>
+            {/* Mobile Links */}
+            <div className="mt-16 flex flex-col gap-7">
+
+              {links.map((link) => (
+                <button
+                  key={link}
+                  onClick={() => handleScrollTo(link)}
+                  className="
+                    border-b
+                    border-white/10
+                    pb-3
+                    text-left
+                    text-3xl
+                    font-bold
+                    capitalize
+                    text-white
+                  "
+                >
+                  {link}
+                </button>
               ))}
-            </ul>
+
+              {/* Games Button */}
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  setOpen(false);
+
+                  setTimeout(() => {
+                    onGamesClick?.();
+                  }, 150);
+                }}
+                className="
+                  mt-2
+                  rounded-2xl
+                  bg-gradient-to-r
+                  from-purple-500
+                  to-cyan-500
+                  px-6
+                  py-4
+                  text-left
+                  text-xl
+                  font-bold
+                  text-white
+                  shadow-lg
+                "
+              >
+                🎮 Open Games
+              </motion.button>
+
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </>
   );
 };
 

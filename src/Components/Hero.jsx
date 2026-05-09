@@ -1,159 +1,207 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
 import { motion } from "framer-motion";
-import pic from "../assets/im2.png";
+import { FaGithub, FaLinkedin, FaDownload } from "react-icons/fa";
+
+import profile from "../assets/im2.png";
 import Resume from "../assets/Resume.pdf";
-import { FaGithub, FaLinkedin, FaTwitter, FaDownload } from "react-icons/fa";
-import { MdMessage } from "react-icons/md";
-import Typical from "react-typical";
 
 const Hero = () => {
-  const icons = [
-    { icon: <FaLinkedin />, href: "https://linkedin.com/in/codershaswat" },
-    { icon: <FaGithub />, href: "https://github.com/Shaswathunter" },
-    { icon: <FaTwitter />, href: "https://x.com/CoderShaswat" },
-    { icon: <MdMessage />, href: "mailto:Shaswat2016@gmail.com" },
-  ];
+  const heroRef = useRef(null);
 
-  const resumeUrl = Resume; // Resume PDF
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+
+      tl.from(".hero-badge", {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+      })
+        .from(
+          ".hero-heading",
+          {
+            opacity: 0,
+            y: 40,
+            duration: 1,
+            ease: "power3.out",
+          },
+          "-=0.2"
+        )
+        .from(
+          ".hero-text",
+          {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+          },
+          "-=0.5"
+        )
+        .from(
+          ".hero-buttons",
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.6,
+          },
+          "-=0.4"
+        )
+        .from(
+          ".hero-image",
+          {
+            opacity: 0,
+            scale: 0.92,
+            duration: 1,
+            ease: "power3.out",
+          },
+          "-=1"
+        );
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden text-white">
-      {/* 🌟 Hero Content */}
-      <div className="relative z-20 max-w-screen-xl mx-auto flex flex-col items-center justify-center h-full px-6 md:flex-row">
+    <section
+      ref={heroRef}
+      className="relative flex min-h-screen items-center overflow-hidden px-5 pt-32 pb-20 sm:px-8 lg:px-12"
+    >
+      {/* Background Glow */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(6,182,212,0.12),transparent_45%)]" />
 
-        {/* 💬 Left Side Text */}
-        <motion.div
-          initial={{ x: -120, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.3 }}
-          className="flex flex-col justify-center h-full text-center md:text-left"
-        >
-          <motion.h2
-            initial={{ y: -80, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="text-4xl sm:text-6xl font-extrabold text-white drop-shadow-[0_0_20px_cyan]"
-          >
-            WELCOME TO
-          </motion.h2>
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-16 lg:grid-cols-2 lg:gap-24">
 
-          <motion.h1
-            initial={{ x: -100, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="text-3xl sm:text-5xl font-bold text-cyan-400 py-4 drop-shadow-[0_0_25px_cyan]"
-          >
-            <Typical steps={["Shaswat's World", 5000]} loop={Infinity} wrapper="b" />
-          </motion.h1>
+        {/* LEFT CONTENT */}
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
 
-          <motion.p
-            initial={{ x: -100, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="text-gray-300 py-4 max-w-lg text-lg drop-shadow-[0_0_15px_cyan]"
-          >
-            <Typical
-              steps={[
-                "I'm a Full Stack Developer (MERN Stack), building modern web applications.",
-                7000,
-              ]}
-              loop={Infinity}
-              wrapper="b"
-            />
-          </motion.p>
+          {/* Badge */}
+          <div className="hero-badge mb-6 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-300 backdrop-blur-sm">
+            Full Stack Developer • MERN Stack
+          </div>
 
-          {/* 🚀 Buttons */}
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col md:flex-row gap-4 mt-6 items-center md:items-start"
-          >
+          {/* Heading */}
+          <h1 className="hero-heading text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+            Building Fast,
+            <span className="block bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Scalable Digital
+            </span>
+            Experiences.
+          </h1>
+
+          {/* Description */}
+          <p className="hero-text mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+            I'm Shaswat Gautam — a Full Stack Developer focused on building
+            premium web applications with modern frontend engineering,
+            scalable backend systems, and smooth user experiences.
+          </p>
+
+          {/* Buttons */}
+          <div className="hero-buttons mt-10 flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap">
+
+            {/* Projects Button */}
             <motion.button
-              onClick={() => {
-                const section = document.getElementById("projects");
-                section?.scrollIntoView({ behavior: "smooth" });
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() =>
+                document
+                  .getElementById("projects")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="rounded-xl bg-cyan-500 px-7 py-4 text-sm font-semibold text-black transition-all duration-300 hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(34,211,238,0.35)]"
             >
-              Explore Projects
+              View Projects
             </motion.button>
 
-            {/* ✅ View + Download Resume Button */}
-      <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md flex items-center gap-3"
-  onClick={() => window.open(resumeUrl, "_blank")}
->
-  View Resume
-  <motion.a
-    href={resumeUrl}
-    download
-    onClick={(e) => e.stopPropagation()}
-    className="text-white flex items-center justify-center"
-    animate={{ y: [0, -5, 0], rotate: [0, 10, -10, 0] }} // float + slight tilt
-    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-    whileHover={{ scale: 1.3, color: "#facc15" }} // hover pop
-  >
-    <FaDownload size={20} />
-  </motion.a>
-</motion.button>
-
-
-            <motion.button
-              onClick={() => {
-                const section = document.getElementById("contact");
-                section?.scrollIntoView({ behavior: "smooth" });
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-gray-700 to-gray-500 px-6 py-3 rounded-md text-white shadow-md"
+            {/* Resume Button */}
+            <motion.a
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              href={Resume}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-cyan-400/20"
             >
-              Contact Me
-            </motion.button>
-          </motion.div>
+              Resume
+              <FaDownload />
+            </motion.a>
+          </div>
 
-          {/* 🌐 Social Icons */}
-          <motion.div
-            className="flex justify-center gap-6 mt-8"
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            {icons.map((item, index) => (
-              <motion.a
-                key={index}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.2 }}
-                className="text-3xl text-gray-300 hover:text-cyan-400 transition"
-              >
-                {item.icon}
-              </motion.a>
-            ))}
-          </motion.div>
-        </motion.div>
+          {/* Social Icons */}
+          <div className="mt-10 flex items-center gap-5 text-2xl text-zinc-500">
 
-        {/* 🧍‍♂️ Profile Image */}
-        <motion.div
-          initial={{ x: 120, opacity: 0, scale: 0.8, y: 30 }}
-          whileInView={{ x: 0, opacity: 1, scale: 1, y: -140 }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="hidden sm:flex w-full md:w-2/3 justify-center mt-10"
+            <motion.a
+              whileHover={{ y: -3 }}
+              href="https://github.com/Shaswathunter"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-all duration-300 hover:text-white"
+            >
+              <FaGithub />
+            </motion.a>
+
+            <motion.a
+              whileHover={{ y: -3 }}
+              href="https://linkedin.com/in/codershaswat"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-all duration-300 hover:text-white"
+            >
+              <FaLinkedin />
+            </motion.a>
+
+          </div>
+        </div>
+
+        {/* RIGHT IMAGE */}
+        <div
+          className="
+            hero-image 
+            relative 
+            mx-auto 
+            mt-12 
+            flex 
+            items-center 
+            justify-center
+            w-[220px] h-[220px]
+            sm:w-[280px] sm:h-[280px]
+            md:w-[380px] md:h-[380px]
+            lg:mt-0
+            lg:w-[480px] lg:h-[480px]
+          "
         >
-          <img
-            src={pic}
-            alt="profile"
-            className="rounded-full w-2/3 md:w-full hover:scale-105 transition duration-300"
-          />
-        </motion.div>
+
+          {/* Glow */}
+          <div className="absolute inset-0 rounded-full bg-cyan-500/10 " />
+
+          {/* Image */}
+         <motion.img
+  drag
+  dragConstraints={{
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  }}
+  dragElastic={0.18}
+  dragTransition={{
+    bounceStiffness: 800,
+    bounceDamping: 8,
+  }}
+  whileDrag={{
+    scale: 1.04,
+    cursor: "grabbing",
+  }}
+  whileHover={{
+    scale: 1.10,
+  }}
+  src={profile}
+  alt="Shaswat Gautam"
+  loading="eager"
+  className="relative z-10 h-full w-full rounded-full border border-white/10 object-cover shadow-2xl cursor-grab active:cursor-grabbing"
+/>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
